@@ -83,12 +83,12 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
 
     const getSemesterById = async (id: string): Promise<Semester> => {
         const response = await getSemesterByIdApi(id);
-        return response.data;
+        return convertToSemesterModel(response.data);
     }
 
     const getAllSemester = async (): Promise<Semester[]> => {
         const response = await getAllSemesterApi();
-        return response.data;
+        return response.data.map((d) => convertToSemesterModel(d));
     }
 
     const createSemester = async (semesterDto: SemesterDto): Promise<void> => {
@@ -191,6 +191,13 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     )
 };
 
+const convertToSemesterModel = (semester: Semester): Semester => {
+    return {
+        ...semester,
+        start: new Date(semester.start),
+        ende: new Date(semester.ende),
+    };
+}
 // ----------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------

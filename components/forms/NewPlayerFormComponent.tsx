@@ -1,6 +1,6 @@
 "use client";
 import React, {ChangeEvent, useState} from 'react';
-import {Alert, Button, Input, Stack} from "@mui/joy";
+import {Alert, Button, Input} from "@mui/joy";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import {SpielerDto} from "@/api/spieler";
 import {useRouter} from "next/navigation";
@@ -8,10 +8,10 @@ import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import FormHelperText from '@mui/joy/FormHelperText';
 import Autocomplete from '@mui/joy/Autocomplete';
-import {useMediaQuery} from "@/hooks/useMediaQuery";
 import {Semester} from "@/api/semester";
 import useSWR from "swr";
 import {Veranstaltung} from "@/api/veranstaltung";
+import {FormContainerComponent} from "@/components/forms/FormContainerComponent";
 
 const INITIAL_STATE: Partial<SpielerDto> = {
     avatarName: "",
@@ -21,7 +21,6 @@ const INITIAL_STATE: Partial<SpielerDto> = {
 
 export const NewPlayerFormComponent: React.FC = () => {
     const router = useRouter();
-    const { isSmall } = useMediaQuery();
     const { createSpieler, getAllSemester, getAllVeranstaltungen } = useApplicationContext();
     const [spielerDto, setSpielerDto] = useState<SpielerDto>(INITIAL_STATE as SpielerDto);
 
@@ -102,7 +101,7 @@ export const NewPlayerFormComponent: React.FC = () => {
     </Alert>
 
     return (
-        <Stack spacing={"var(--gap-3)"} sx={{ width: isSmall ? "100%" : "600px" }}>
+        <FormContainerComponent>
             <FormControl size="lg">
                 <FormLabel>Spieler-ID</FormLabel>
                 <Input
@@ -142,6 +141,6 @@ export const NewPlayerFormComponent: React.FC = () => {
             </FormControl>
             {formError ? <Alert color="danger">{formError}</Alert> : null}
             <Button onClick={handleSubmit}>Speichern</Button>
-        </Stack>
+        </FormContainerComponent>
     );
 };

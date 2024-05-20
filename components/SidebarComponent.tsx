@@ -17,6 +17,7 @@ import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined
 import SportsKabaddiOutlinedIcon from '@mui/icons-material/SportsKabaddiOutlined';
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 
 const INITIAL_SIDEBAR_STATE = true;
 
@@ -54,6 +55,13 @@ export const SidebarComponent: React.FC = () => {
             icon: <DashboardOutlinedIcon />,
             isActive: pathname === "/",
             onClick: () => router.push("/"),
+        },
+        {
+            label: "Semester",
+            icon: <SchoolOutlinedIcon />,
+            isActive: pathname === "/semester",
+            onClick: () => router.push("/semester"),
+
         },
         {
             label: "Veranstaltungen",
@@ -167,13 +175,13 @@ const SidebarWrapper = styled(Box)`
     display: grid;
     grid-template-columns: 1fr max-content;
     height: 100%;
+    overflow-y: auto;
 `;
 const SidebarContainer = styled(Box)`
     display: grid;
     gap: var(--gap-1);
     grid-template-rows: 1fr max-content;
     padding: var(--gap-1);
-    overflow-y: auto;
 `;
 const UpperButtonListContainer = styled(Box)`
     display: grid;

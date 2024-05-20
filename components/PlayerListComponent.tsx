@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import {Alert, Box, Table} from "@mui/joy";
+import {Alert, Box} from "@mui/joy";
 import useSWR from "swr";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import {Spieler} from "@/api/spieler";
@@ -8,6 +8,7 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import {Semester} from "@/api/semester";
 import {Veranstaltung} from "@/api/veranstaltung";
+import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 
 const PlayerListComponent: React.FC = () => {
     const { getAllSpieler, getAllSemester, getAllVeranstaltungen } = useApplicationContext();
@@ -39,68 +40,51 @@ const PlayerListComponent: React.FC = () => {
         return veranstaltungen?.find(s => s.id === id) as Veranstaltung;
     }
 
-    if (isLoadingSpieler || !spieler) return <div>Wird geladen...</div>
+    if (
+        isLoadingSpieler ||
+        isLoadingSemesters ||
+        isLoadingVeranstaltungen ||
+        !spieler ||
+        !semesters ||
+        !veranstaltungen
+    ) return <div>Wird geladen...</div>
 
     if (errorSpieler) return <Alert color="danger">{(errorSpieler as Error).message}</Alert>
 
+    if (errorSemesters) return <Alert color="danger">{(errorSemesters as Error).message}</Alert>
+
+    if (errorVeranstaltungen) return <Alert color="danger">{(errorVeranstaltungen as Error).message}</Alert>
+
     return (
-        <Table size="lg" variant="outlined" sx={{ borderRadius: "lg" }}>
-            <Box component="thead">
-                <Box
-                    component="tr"
-                    sx={{
-                        fontWeight: 600,
-                        "& td": {
-                            borderBottom: "2px solid var(--TableCell-borderColor)",
-                            py: isSmall ? "10px" : "15px",
-                        },
-                    }}
-                >
+        <CustomTableComponent
+            headerCells={
+                <>
                     <Box component="td" sx={{ width: "50px" }}></Box>
                     <Box component="td">Spieler-ID</Box>
                     <Box component="td">Semester</Box>
                     {isSmall ?
                         null :
-                        <>
-                            <Box component="td">Veranstaltung</Box>
-                        </>
+                        <Box component="td">Veranstaltung</Box>
                     }
-                </Box>
-            </Box>
-            <Box component="tbody">
-                {spieler.map((spieler, index) =>
-                    <Box
-                        component="tr"
-                        key={index}
-                        sx={{
-                            "&:hover": {
-                                "& *": {
-                                    backgroundColor: theme => theme.vars.palette.primary[500],
-                                    color: "white",
-                                    cursor: "pointer",
-                                },
-                            }
-                        }}
-                    >
-                        <Box component="td" sx={{ width: "50px" }}>
-                            <AccountCircleOutlinedIcon />
-                        </Box>
-                        <Box component="td">{spieler.avatarName}</Box>
-                        <Box component="td">{getSemester(spieler.semesterId).bezeichnung}</Box>
-                        {isSmall ?
-                            null :
-                            <>
-                                <Box component="td">
-                                    {getVeranstaltung(spieler.veranstaltungId).bezeichnung} - {getVeranstaltung(spieler.veranstaltungId).name}
-                                </Box>
-                            </>
-                        }
+                </>
+            }
+            bodyRows={spieler.map((spieler) =>
+                <>
+                    <Box component="td" sx={{ width: "50px" }}>
+                        <AccountCircleOutlinedIcon />
                     </Box>
-                )}
-            </Box>
-        </Table>
+                    <Box component="td">{spieler.avatarName}</Box>
+                    <Box component="td">{getSemester(spieler.semesterId).bezeichnung}</Box>
+                    {isSmall ?
+                        null :
+                        <Box component="td">
+                            {getVeranstaltung(spieler.veranstaltungId).bezeichnung} - {getVeranstaltung(spieler.veranstaltungId).name}
+                        </Box>
+                    }
+                </>
+            )}
+        />
     );
 };
 
 export default PlayerListComponent;
-
