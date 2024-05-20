@@ -3,7 +3,7 @@ import {axiosClient} from "@/api/httpClient";
 
 export type Spieler = {
     id: string;
-    avatarName: string;
+    spielerId: string;
     semesterId: string;
     veranstaltungId: string;
 };
@@ -16,8 +16,8 @@ export const getSpielerByIdApi = async (id: string): Promise<AxiosResponse<Spiel
     return await axiosClient.get<Spieler>(`${ENDPOINT}/${id}`);
 };
 
-export const getSpielerByAvatarNameApi = async (avatarName: string): Promise<AxiosResponse<Spieler>> => {
-    return await axiosClient.get<Spieler>(`${ENDPOINT}?avatar_name=${avatarName}`);
+export const getSpielerBySpielerIdApi = async (avatarName: string): Promise<AxiosResponse<Spieler>> => {
+    return await axiosClient.get<Spieler>(`${ENDPOINT}?spieler_id=${avatarName}`);
 }
 
 export const getAllSpielerApi = async (): Promise<AxiosResponse<Spieler[]>> => {

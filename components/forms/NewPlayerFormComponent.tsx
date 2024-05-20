@@ -15,7 +15,7 @@ import {FormContainerComponent} from "@/components/forms/FormContainerComponent"
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 
 const INITIAL_STATE: Partial<SpielerDto> = {
-    avatarName: "",
+    spielerId: "",
     semesterId: undefined,
     veranstaltungId: undefined,
 } as const;
@@ -40,7 +40,7 @@ export const NewPlayerFormComponent: React.FC = () => {
     } = useSWR<Veranstaltung[]>("getAllVeranstaltungen", async () => await getAllVeranstaltungen());
 
     const handleSubmit = async () => {
-        if (!spielerDto.avatarName) {
+        if (!spielerDto.spielerId) {
             setFormError("Generieren Sie erst eine Spieler-ID.");
             return;
         }
@@ -59,7 +59,7 @@ export const NewPlayerFormComponent: React.FC = () => {
     const generatePlayerId = () => {
         setSpielerDto(prevState => ({
             ...prevState,
-            avatarName: `#${new Date().getTime().toString()}`,
+            spielerId: `#${new Date().getTime().toString()}`,
         }));
     }
 
@@ -110,8 +110,8 @@ export const NewPlayerFormComponent: React.FC = () => {
                     slotProps={{
                         input: {
                             component: "input",
-                            name: "avatarName",
-                            value: spielerDto.avatarName,
+                            name: "spierlerId",
+                            value: spielerDto.spielerId,
                             placeholder: "Spieler-ID generieren",
                             onChange: handleChange,
                         }

@@ -18,7 +18,7 @@ import {
 import {
     createSpielerApi,
     getAllSpielerApi,
-    getSpielerByAvatarNameApi,
+    getSpielerBySpielerIdApi,
     getSpielerByIdApi,
     Spieler,
     SpielerDto,
@@ -50,7 +50,7 @@ type ContextOutput = {
     updateSemester: (semester: Semester) => Promise<void>;
     deleteSemester: (id: string) => Promise<void>;
     getSpielerById: (id: string) => Promise<Spieler>;
-    getSpielerByAvatarName: (avatarName: string) => Promise<Spieler>;
+    getSpielerBySpielerId: (spielerId: string) => Promise<Spieler>;
     getAllSpieler: () => Promise<Spieler[]>;
     createSpieler: (spielerDto: SpielerDto) => Promise<void>;
     updateSpieler: (spieler: Spieler) => Promise<void>;
@@ -108,8 +108,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    const getSpielerByAvatarName = async (avatarName: string): Promise<Spieler> => {
-        const response = await getSpielerByAvatarNameApi(avatarName);
+    const getSpielerBySpielerId = async (spielerId: string): Promise<Spieler> => {
+        const response = await getSpielerBySpielerIdApi(spielerId);
         return response.data;
     }
 
@@ -173,7 +173,7 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             updateSemester,
             deleteSemester,
             getSpielerById,
-            getSpielerByAvatarName,
+            getSpielerBySpielerId,
             getAllSpieler,
             createSpieler,
             updateSpieler,

@@ -73,7 +73,7 @@ const PlayerListComponent: React.FC = () => {
                     <Box component="td" sx={{ width: "50px" }}>
                         <AccountCircleOutlinedIcon />
                     </Box>
-                    <Box component="td">{spieler.avatarName}</Box>
+                    <Box component="td">{spieler.spielerId}</Box>
                     <Box component="td">{getSemester(spieler.semesterId).bezeichnung}</Box>
                     {isSmall ?
                         null :
