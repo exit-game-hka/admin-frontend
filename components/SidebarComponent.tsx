@@ -176,6 +176,9 @@ const SidebarWrapper = styled(Box)`
     grid-template-columns: 1fr max-content;
     height: 100%;
     overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 `;
 const SidebarContainer = styled(Box)`
     display: grid;

@@ -33,6 +33,8 @@ const NavigationWrapper = styled(Sheet)`
     z-index: 1000;
     height: var(--appbar-min-height);
     width: 100%;
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
 `;
 
 const NavigationBarContainer = styled(Sheet)`
