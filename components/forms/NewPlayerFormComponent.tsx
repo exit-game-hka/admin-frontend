@@ -12,6 +12,7 @@ import {Semester} from "@/api/semester";
 import useSWR from "swr";
 import {Veranstaltung} from "@/api/veranstaltung";
 import {FormContainerComponent} from "@/components/forms/FormContainerComponent";
+import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined';
 
 const INITIAL_STATE: Partial<SpielerDto> = {
     avatarName: "",
@@ -115,6 +116,7 @@ export const NewPlayerFormComponent: React.FC = () => {
                             onChange: handleChange,
                         }
                     }}
+                    startDecorator={<VpnKeyOutlinedIcon fontSize="small" />}
                     endDecorator={<Button onClick={generatePlayerId}>Generieren</Button>}
                 />
                 <FormHelperText>

@@ -66,8 +66,8 @@ export const SidebarComponent: React.FC = () => {
         {
             label: "Veranstaltungen",
             icon: <SportsEsportsOutlinedIcon />,
-            isActive: pathname.includes("/events"),
-            onClick: () => router.push("/events"),
+            isActive: pathname.includes("/lessons"),
+            onClick: () => router.push("/lessons"),
         },
         {
             label: "Spieler",

@@ -47,7 +47,6 @@ export const SemesterListComponent: React.FC = () => {
                         <>
                             <Box component="td">{s.start.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
                             <Box component="td">{s.ende.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
-
                         </>
                     }
                 </>
