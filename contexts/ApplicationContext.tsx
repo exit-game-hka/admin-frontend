@@ -18,20 +18,13 @@ import {
 import {
     createSpielerApi,
     getAllSpielerApi,
-    getSpielerBySpielerIdApi,
     getSpielerByIdApi,
+    getSpielerBySpielerIdApi,
     Spieler,
     SpielerDto,
     updateSpielerApi
 } from "@/api/spieler";
-import {
-    createStatusApi,
-    getStatusBySemesterIdApi,
-    getStatusBySpielerIdApi,
-    Status,
-    StatusDto,
-    updateStatusApi
-} from "@/api/status";
+import {getStatusBySemesterIdApi, getStatusBySpielerIdApi, Status} from "@/api/status";
 import {
     createVeranstaltungApi,
     getAllVeranstaltungenApi,
@@ -56,8 +49,8 @@ type ContextOutput = {
     updateSpieler: (spieler: Spieler) => Promise<void>;
     getStatusBySpielerId: (id: string) => Promise<Status>;
     getStatusBySemesterId: (id: string) => Promise<Status>;
-    createStatus: (statusDto: StatusDto) => Promise<void>;
-    updateStatus: (status: Status) => Promise<void>;
+    //createStatus: (statusDto: StatusDto) => Promise<void>;
+    //updateStatus: (status: Status) => Promise<void>;
     getVeranstaltungById: (id: string) => Promise<Veranstaltung>;
     getAllVeranstaltungen: () => Promise<Veranstaltung[]>;
     createVeranstaltung: (veranstaltungDto: VeranstaltungDto) => Promise<void>;
@@ -136,14 +129,14 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    const createStatus = async (statusDto: StatusDto): Promise<void> => {
-        const response = await createStatusApi(statusDto);
-        return response.data;
-    }
-
-    const updateStatus = async (status: Status): Promise<void> => {
-        await updateStatusApi(status);
-    }
+    // const createStatus = async (statusDto: StatusDto): Promise<void> => {
+    //     const response = await createStatusApi(statusDto);
+    //     return response.data;
+    // }
+    //
+    // const updateStatus = async (status: Status): Promise<void> => {
+    //     await updateStatusApi(status);
+    // }
 
     const getVeranstaltungById = async (id: string): Promise<Veranstaltung> => {
         const response = await getVeranstaltungByIdApi(id);
@@ -179,8 +172,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             updateSpieler,
             getStatusBySpielerId,
             getStatusBySemesterId,
-            createStatus,
-            updateStatus,
+            //createStatus,
+            //updateStatus,
             getVeranstaltungById,
             getAllVeranstaltungen,
             createVeranstaltung,

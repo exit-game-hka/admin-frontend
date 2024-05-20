@@ -9,6 +9,7 @@ export type Status = {
     spielStart: Date;
     spielEnde: Date;
     istSpielBeendet: boolean;
+    istSpielAbgebrochen: boolean;
 };
 
 export type StatusDto = Omit<Status, "id">;
@@ -23,12 +24,12 @@ export const getStatusBySemesterIdApi = async (id: string): Promise<AxiosRespons
     return await axiosClient.get<Status>(`${ENDPOINT}/semester/${id}`);
 };
 
-export const createStatusApi = async (statusDto: StatusDto) => {
-    const payload = JSON.stringify(statusDto);
-    return await axiosClient.post(ENDPOINT, payload);
-}
-
-export const updateStatusApi = async (status: Status) => {
-    const payload = JSON.stringify(status);
-    return await axiosClient.put(ENDPOINT, payload);
-};
+// export const createStatusApi = async (statusDto: StatusDto) => {
+//     const payload = JSON.stringify(statusDto);
+//     return await axiosClient.post(ENDPOINT, payload);
+// }
+//
+// export const updateStatusApi = async (status: Status) => {
+//     const payload = JSON.stringify(status);
+//     return await axiosClient.put(ENDPOINT, payload);
+// };
