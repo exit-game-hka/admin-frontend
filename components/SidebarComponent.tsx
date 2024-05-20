@@ -134,10 +134,15 @@ const ButtonListComponent: React.FC<PropsButtonList> = (
                     key={`${button.label}${index}`}
                     onClick={button.onClick}
                     endAction={button.endAction}
+                    sx={{
+                        "& *": button.isActive ? {
+                            backgroundColor: theme => button.isActive ? `${theme.vars.palette.primary[500]} !important` : "initial",
+                            color: "white"
+                        } : {}
+                    }}
                 >
                     <StyledListItemButton
                         selected={button.isActive}
-                        color={button.isActive ? "primary" : "neutral"}
                     >
                         <ListItemDecorator
                             sx={{

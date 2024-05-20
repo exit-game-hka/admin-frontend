@@ -1,16 +1,17 @@
 "use client";
-import React, {PropsWithChildren, useEffect} from "react";
+import React, {PropsWithChildren, ReactNode, useEffect} from "react";
 import styled from "styled-components";
-import {Box, Typography, useTheme} from "@mui/joy";
+import {Box, Stack, Typography, useTheme} from "@mui/joy";
 import {usePathname} from "next/navigation";
 
 type Props = PropsWithChildren & {
     title?: string;
     subtitle?: string;
+    rightContent?: ReactNode;
 };
 
 export const PageWrapperComponent: React.FC<Props> = (props) => {
-    const { title, subtitle, children } = props;
+    const { title, subtitle, rightContent, children } = props;
     const pathname = usePathname();
     const theme = useTheme();
 
@@ -36,13 +37,27 @@ export const PageWrapperComponent: React.FC<Props> = (props) => {
 
     return (
         <PageContainer>
-            <TitleAndSubtitleContainer
-                titleispresent={title ? "true" : "false"}
-                bgcolor={theme.vars.palette.background.body}
+            <Stack
+                direction={"row"}
+                spacing={"var(--space-3)"}
+                justifyContent={"space-between"}
+                justifyItems={"space-between"}
+                alignItems={"center"}
+                alignContent={"center"}
             >
-                <Typography level="h2">{title}</Typography>
-                <Typography level="title-sm">{subtitle}</Typography>
-            </TitleAndSubtitleContainer>
+                <TitleAndSubtitleContainer
+                    titleispresent={title ? "true" : "false"}
+                    bgcolor={theme.vars.palette.background.body}
+                >
+                    <Typography level="h2">{title}</Typography>
+                    <Typography level="title-sm">{subtitle}</Typography>
+                </TitleAndSubtitleContainer>
+                {rightContent ?
+                    <Stack direction={"row"} spacing={"var(--space-3)"}>
+                        {rightContent}
+                    </Stack> : null
+                }
+            </Stack>
             <Box component="main">{children}</Box>
         </PageContainer>
     );

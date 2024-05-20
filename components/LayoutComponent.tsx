@@ -56,6 +56,7 @@ const MainBoxContainer = styled(Box)`
     padding: 0 var(--gap-4) var(--gap-8) var(--gap-4);
     border-radius: var(--gap-1) 0 0 0;
     width: 100%;
+    overflow-y: auto;
 
     @media screen and (max-width: 900px) {
         padding: 0 var(--gap-2) var(--gap-8) var(--gap-2);

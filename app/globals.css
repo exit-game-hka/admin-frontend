@@ -30,21 +30,19 @@ body {
   --font-extra-extra-large-size: 40px;
   --font-3x-lage-size: 50px;
 
-  /* Farben */
-  --color-white: #fff;
-  --color-main: #2196f3;
-  --color-secondary: #42a5f5;
+  /* Colors */
+  --color-primary: #653C8C;
+  --color-secondary: #A3E7CB;
   --color-tertiary: #F0FCF8;
-  --color-on-main: #FFFFFF;
+  --color-on-primary: #FFFFFF;
   --color-on-secondary: #5a5f7a;
-  --color-error: #c41c1c;
+  --color-on-tertiary: #5a5f7a;
+  --color-error: #FE4848;
   --color-warn: #FFBB38;
   --color-darkgray-100: #999;
   --color-darkgray-200: #989898;
   --color-black: #000;
-  --color-light-black: #1b1e2e;
-  --btn-primary: #C2185B;
-  --btn-primary-light: #E9C6D4;
+  --color-white: #fff;
 
   /* Abstände */
   --gap-1: 10px;

@@ -5,6 +5,7 @@ import {useServerInsertedHTML} from "next/navigation";
 import {CacheProvider} from "@emotion/react";
 import {CssVarsProvider} from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
+import {extendTheme} from "@mui/joy";
 
 type PropsThemeRegistry = PropsWithChildren & {
     options: Options;
@@ -54,10 +55,52 @@ export default function ThemeRegistry(props: PropsThemeRegistry) {
 
     return (
         <CacheProvider value={cache}>
-            <CssVarsProvider>
+            {/*<CssVarsProvider theme={theme}>*/}
+            <CssVarsProvider
+                defaultMode="system"
+                theme={deepPurpleTheme}
+            >
+                {/* the custom theme is optional */}
                 <CssBaseline />
                 {children}
             </CssVarsProvider>
         </CacheProvider>
     );
-}
+};
+
+const deepPurpleTheme = extendTheme({
+    "colorSchemes": {
+        "light": {
+            "palette": {
+                "primary": {
+                    50: '#ece7f1',
+                    100: '#d1c3dd',
+                    200: '#b29bc6',
+                    300: '#9373af',
+                    400: '#7b559d',
+                    500: '#64378c',
+                    600: '#5c3184',
+                    700: '#522a79',
+                    800: '#48236f',
+                    900: '#36165c',
+                }
+            }
+        },
+        "dark": {
+            "palette": {
+                "primary": {
+                    "50": "#f8fafc",
+                    "100": "#f1f5f9",
+                    "200": "#e2e8f0",
+                    "300": "#cbd5e1",
+                    "400": "#94a3b8",
+                    "500": "#673ab7",
+                    "600": "#5e35b1",
+                    "700": "#334155",
+                    "800": "#1e293b",
+                    "900": "#492d78"
+                }
+            }
+        }
+    }
+});
