@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import styled from "styled-components";
 import {Box, Card, Divider, Sheet, Stack, Typography} from "@mui/joy";

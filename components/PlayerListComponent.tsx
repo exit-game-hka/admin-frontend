@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import {Alert, Box} from "@mui/joy";
+import {Alert, Box, TableProps} from "@mui/joy";
 import useSWR from "swr";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import {Spieler} from "@/api/spieler";
@@ -10,7 +10,13 @@ import {Semester} from "@/api/semester";
 import {Veranstaltung} from "@/api/veranstaltung";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 
-const PlayerListComponent: React.FC = () => {
+type Props = {
+    tableProps: TableProps;
+    limit?: number | undefined;
+};
+
+const PlayerListComponent: React.FC<Props> = (props) => {
+    const { tableProps, limit } = props;
     const { getAllSpieler, getAllSemester, getAllVeranstaltungen } = useApplicationContext();
     const { isSmall } = useMediaQuery();
 
@@ -57,6 +63,7 @@ const PlayerListComponent: React.FC = () => {
 
     return (
         <CustomTableComponent
+            {...tableProps}
             headerCells={
                 <>
                     <Box component="td" sx={{ width: "50px" }}></Box>
@@ -68,7 +75,7 @@ const PlayerListComponent: React.FC = () => {
                     }
                 </>
             }
-            bodyRows={spieler.map((spieler) =>
+            bodyRows={spieler.slice(0, limit).map((spieler) =>
                 <>
                     <Box component="td" sx={{ width: "50px" }}>
                         <AccountCircleOutlinedIcon />

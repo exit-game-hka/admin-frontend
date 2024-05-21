@@ -20,8 +20,8 @@ export const getStatusBySpielerIdApi = async (id: string): Promise<AxiosResponse
     return await axiosClient.get<Status>(`${ENDPOINT}/spieler/${id}`);
 };
 
-export const getStatusBySemesterIdApi = async (id: string): Promise<AxiosResponse<Status>> => {
-    return await axiosClient.get<Status>(`${ENDPOINT}/semester/${id}`);
+export const getStatusBySemesterIdApi = async (id: string): Promise<AxiosResponse<Status[]>> => {
+    return await axiosClient.get<Status[]>(`${ENDPOINT}/semester/${id}`);
 };
 
 // export const createStatusApi = async (statusDto: StatusDto) => {

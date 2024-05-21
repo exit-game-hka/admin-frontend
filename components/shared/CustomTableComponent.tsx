@@ -1,19 +1,19 @@
 "use client";
 import React, {ReactNode} from 'react';
-import {Box, Table} from "@mui/joy";
+import {Box, Table, TableProps} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 
-type Props = {
+type Props = TableProps & {
   headerCells: ReactNode;
   bodyRows: ReactNode[];
 };
 
 export const CustomTableComponent: React.FC<Props> = (props) => {
-  const { headerCells, bodyRows } = props;
+  const { headerCells, bodyRows, ...tableProps } = props;
   const { isSmall } = useMediaQuery();
 
   return (
-      <Table size="lg" variant="outlined" sx={{ borderRadius: "lg" }}>
+      <Table size="lg" variant="outlined" sx={{ borderRadius: "lg" }} {...tableProps}>
         <Box component="thead">
           <Box
               component="tr"

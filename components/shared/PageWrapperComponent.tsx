@@ -46,6 +46,7 @@ export const PageWrapperComponent: React.FC<Props> = (props) => {
                 alignContent={"center"}
             >
                 <TitleAndSubtitleContainer
+                    component="div"
                     titleispresent={title ? "true" : "false"}
                     bgcolor={theme.vars.palette.background.body}
                 >

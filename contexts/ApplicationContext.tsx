@@ -1,5 +1,5 @@
 "use client";
-import React, {createContext, PropsWithChildren} from "react";
+import React, {createContext, PropsWithChildren, useState} from "react";
 import {
     createInteraktionApi,
     getInteraktionBySpielerIdAndAufgabeIdApi,
@@ -35,6 +35,8 @@ import {
 } from "@/api/veranstaltung";
 
 type ContextOutput = {
+    semester: Semester | undefined;
+    setSemester: (semester: Semester) => void;
     getInteraktionBySpielerIdAndAufgabeId: (spielerId: string, aufgabeId: string) => Promise<Interaktion[]>;
     createInteraktion: (interaktionDto: InteraktionDto) => Promise<void>;
     getSemesterById: (id: string) => Promise<Semester>;
@@ -48,7 +50,7 @@ type ContextOutput = {
     createSpieler: (spielerDto: SpielerDto) => Promise<void>;
     updateSpieler: (spieler: Spieler) => Promise<void>;
     getStatusBySpielerId: (id: string) => Promise<Status>;
-    getStatusBySemesterId: (id: string) => Promise<Status>;
+    getStatusBySemesterId: (id: string) => Promise<Status[]>;
     //createStatus: (statusDto: StatusDto) => Promise<void>;
     //updateStatus: (status: Status) => Promise<void>;
     getVeranstaltungById: (id: string) => Promise<Veranstaltung>;
@@ -64,6 +66,8 @@ type Props = Readonly<PropsWithChildren>;
 
 export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     const { children } = props;
+
+    const [semester, setSemester] = useState<Semester | undefined>(undefined);
 
     const getInteraktionBySpielerIdAndAufgabeId = async (spielerId: string, aufgabeId: string): Promise<Interaktion[]> => {
         const response = await getInteraktionBySpielerIdAndAufgabeIdApi(spielerId, aufgabeId);
@@ -124,7 +128,7 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    const getStatusBySemesterId = async (id: string): Promise<Status> => {
+    const getStatusBySemesterId = async (id: string): Promise<Status[]> => {
         const response = await getStatusBySemesterIdApi(id);
         return response.data;
     }
@@ -158,6 +162,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
 
     return (
         <ApplicationContext.Provider value={{
+            semester,
+            setSemester,
             getInteraktionBySpielerIdAndAufgabeId,
             createInteraktion,
             getSemesterById,

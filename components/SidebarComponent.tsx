@@ -93,6 +93,7 @@ export const SidebarComponent: React.FC = () => {
         {
             label: "Einstellungen",
             icon: <SettingsOutlinedIcon />,
+            isActive: pathname.includes("/settings"),
             onClick: () => router.push("/settings"),
         },
         {
@@ -145,7 +146,7 @@ const ButtonListComponent: React.FC<PropsButtonList> = (
                     sx={{
                         "& *": button.isActive ? {
                             backgroundColor: theme => button.isActive ? `${theme.vars.palette.primary[500]} !important` : "initial",
-                            color: "white"
+                            color: "white !important",
                         } : {}
                     }}
                 >
