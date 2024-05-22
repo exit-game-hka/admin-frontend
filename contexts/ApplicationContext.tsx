@@ -33,6 +33,7 @@ import {
     Veranstaltung,
     VeranstaltungDto
 } from "@/api/veranstaltung";
+import {Ergebnis, getErgebnisByAufgabeIdAndSpielerIdApi, getErgebnisBySemesterIdApi} from "@/api/ergebnis";
 
 type ContextOutput = {
     semester: Semester | undefined;
@@ -57,6 +58,10 @@ type ContextOutput = {
     getAllVeranstaltungen: () => Promise<Veranstaltung[]>;
     createVeranstaltung: (veranstaltungDto: VeranstaltungDto) => Promise<void>;
     updateVeranstaltung: (veranstaltung: Veranstaltung) => Promise<void>;
+    // Ergebnis
+    getErgebnisByAufgabeIdAndSpielerId: (aufgabeId: string, spielerId: string) => Promise<Ergebnis[]>;
+    getErgebnisBySemesterId: (id: string) => Promise<Ergebnis[]>;
+    //createErgebnis: (ergebnisDto: ErgebnisDto) => Promise<void>;
 }
 
 // @ts-ignore
@@ -160,6 +165,21 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         await updateVeranstaltungApi(veranstaltung);
     }
 
+    // Ergebnis
+    const getErgebnisByAufgabeIdAndSpielerId = async (aufgabeId: string, spielerId: string): Promise<Ergebnis[]> => {
+        const response = await getErgebnisByAufgabeIdAndSpielerIdApi(aufgabeId, spielerId);
+        return response.data;
+    }
+
+    const getErgebnisBySemesterId = async (id: string): Promise<Ergebnis[]> => {
+        const response = await getErgebnisBySemesterIdApi(id);
+        return response.data;
+    }
+
+    // const createErgebnis = async (ergebnisDto: ErgebnisDto): Promise<void> => {
+    //     await createErgebnisApi(ergebnisDto);
+    // }
+
     return (
         <ApplicationContext.Provider value={{
             semester,
@@ -184,6 +204,9 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getAllVeranstaltungen,
             createVeranstaltung,
             updateVeranstaltung,
+            getErgebnisByAufgabeIdAndSpielerId,
+            getErgebnisBySemesterId,
+            //createErgebnis,
         }}>
             {children}
         </ApplicationContext.Provider>
