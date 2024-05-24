@@ -11,7 +11,7 @@ import {Veranstaltung} from "@/api/veranstaltung";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 
 type Props = {
-    tableProps: TableProps;
+    tableProps?: TableProps;
     limit?: number | undefined;
 };
 
