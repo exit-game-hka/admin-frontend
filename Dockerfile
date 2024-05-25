@@ -6,6 +6,7 @@ FROM node:${NODE_VERSION}-alpine AS deps
 # RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
+COPY .env.production ./
 RUN npm ci
 
 # Build the app
