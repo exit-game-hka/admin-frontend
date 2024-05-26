@@ -24,17 +24,17 @@ export const SemesterListComponent: React.FC = () => {
     return (
         <CustomTableComponent
             headerCells={
-                <>
-                    <Box component="td" sx={{ width: "50px" }}></Box>
-                    <Box component="td">Bezeichnung</Box>
+                <Box component="tr">
+                    <Box component="th" sx={{ width: "50px" }}></Box>
+                    <Box component="th">Bezeichnung</Box>
                     {isSmall ?
                         null :
                         <>
-                            <Box component="td">Start</Box>
-                            <Box component="td">Ende</Box>
+                            <Box component="th">Start</Box>
+                            <Box component="th">Ende</Box>
                         </>
                     }
-                </>
+                </Box>
             }
             bodyRows={semesters.map((s) =>
                 <>

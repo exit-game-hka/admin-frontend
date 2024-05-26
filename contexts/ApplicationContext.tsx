@@ -20,6 +20,7 @@ import {
     getAllSpielerApi,
     getSpielerByIdApi,
     getSpielerBySpielerIdApi,
+    getSpielerListBySemesterIdApi,
     Spieler,
     SpielerDto,
     updateSpielerApi
@@ -45,11 +46,14 @@ type ContextOutput = {
     createSemester: (semesterDto: SemesterDto) => Promise<void>;
     updateSemester: (semester: Semester) => Promise<void>;
     deleteSemester: (id: string) => Promise<void>;
+    // Spieler
     getSpielerById: (id: string) => Promise<Spieler>;
     getSpielerBySpielerId: (spielerId: string) => Promise<Spieler>;
     getAllSpieler: () => Promise<Spieler[]>;
     createSpieler: (spielerDto: SpielerDto) => Promise<void>;
     updateSpieler: (spieler: Spieler) => Promise<void>;
+    getSpielerListBySemesterId: (semesterId: string) => Promise<Spieler[]>;
+    // Status
     getStatusBySpielerId: (id: string) => Promise<Status>;
     getStatusBySemesterId: (id: string) => Promise<Status[]>;
     //createStatus: (statusDto: StatusDto) => Promise<void>;
@@ -128,6 +132,11 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         await updateSpielerApi(spieler);
     }
 
+    const getSpielerListBySemesterId = async (semesterId: string): Promise<Spieler[]> => {
+        const response = await getSpielerListBySemesterIdApi(semesterId);
+        return response.data;
+    }
+
     const getStatusBySpielerId = async (id: string): Promise<Status> => {
         const response = await getStatusBySpielerIdApi(id);
         return response.data;
@@ -196,6 +205,7 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getAllSpieler,
             createSpieler,
             updateSpieler,
+            getSpielerListBySemesterId,
             getStatusBySpielerId,
             getStatusBySemesterId,
             //createStatus,
@@ -221,5 +231,35 @@ const convertToSemesterModel = (semester: Semester): Semester => {
     };
 }
 // ----------------------------------------------------------------
-// Types
+// Types & const
 // ----------------------------------------------------------------
+
+export const TIME_UNIT: string = "Min." as const;
+
+export enum Aufgabe {
+    AUFGABE_1 = "30000000-0000-0000-0000-000000000001",
+    AUFGABE_2 = "30000000-0000-0000-0000-000000000002",
+    AUFGABE_3 = "30000000-0000-0000-0000-000000000003",
+    AUFGABE_4 = "30000000-0000-0000-0000-000000000004",
+    AUFGABE_5 = "30000000-0000-0000-0000-000000000005",
+    AUFGABE_6 = "30000000-0000-0000-0000-000000000006",
+}
+
+export type Rooms = {
+    room1: string;
+    room2: string;
+    room3: string;
+    room4: string;
+    room5: string;
+    room6: string;
+};
+
+export type CleanResult = {
+    playerId: string;
+    interactionPerRoom: Rooms;
+    timeSpentPerRoom: Rooms;
+    totalPlayTime: string;
+    triesPerTask: Rooms;
+    hasFinishedGame?: boolean | undefined;
+    comments: string[];
+};
