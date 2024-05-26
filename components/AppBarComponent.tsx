@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import styled from "styled-components";
-import {Box, Card, Divider, Sheet, Stack, Typography} from "@mui/joy";
+import {useMediaQuery} from "@/hooks/useMediaQuery";
+import {Avatar, Box, Divider, Sheet, Stack, Typography} from "@mui/joy";
 
 /**
  * React-Komponente für die App Bar der Anwendung.
@@ -8,15 +10,18 @@ import {Box, Card, Divider, Sheet, Stack, Typography} from "@mui/joy";
  * Stellt die Navigationselemente und die Suchfunktion bereit.
  */
 export const AppBarComponent: React.FC = () => {
+    const  { isSmall } = useMediaQuery();
     return (
         <NavigationWrapper>
             <NavigationBarContainer>
                 <Stack direction="row" spacing="var(--gap-1)">
                     <Typography component="p" level="body-md">
-                        {process.env.NEXT_PUBLIC_APPLICATION_NAME!}
+                        {isSmall ? "Exit-Game HKA" : process.env.NEXT_PUBLIC_APPLICATION_NAME!}
                     </Typography>
                 </Stack>
-                <NavigationBarOptionsContainer />
+                <NavigationBarOptionsContainer>
+                    <Avatar variant="outlined">MG</Avatar>
+                </NavigationBarOptionsContainer>
             </NavigationBarContainer>
             <Divider orientation={"horizontal"} />
         </NavigationWrapper>
