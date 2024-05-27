@@ -65,15 +65,15 @@ const PlayerListComponent: React.FC<Props> = (props) => {
         <CustomTableComponent
             {...tableProps}
             headerCells={
-                <>
-                    <Box component="td" sx={{ width: "50px" }}></Box>
-                    <Box component="td">Spieler-ID</Box>
-                    <Box component="td">Semester</Box>
+                <Box component="tr">
+                    <Box component="th" sx={{ width: "50px" }}></Box>
+                    <Box component="th">Spieler-ID</Box>
+                    <Box component="th">Semester</Box>
                     {isSmall ?
                         null :
-                        <Box component="td">Veranstaltung</Box>
+                        <Box component="th">Veranstaltung</Box>
                     }
-                </>
+                </Box>
             }
             bodyRows={spieler.slice(0, limit).map((spieler) =>
                 <>

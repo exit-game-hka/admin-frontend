@@ -1,10 +1,14 @@
 import {AxiosResponse} from "axios";
 import {axiosClient} from "@/api/httpClient";
+import {Spieler} from "@/api/spieler";
+import {Aufgabe} from "@/api/aufgabe";
 
 export type Ergebnis = {
     id: string;
     spielerId: string;
+    spieler: Spieler;
     aufgabeId: string;
+    aufgabe: Aufgabe;
     semesterId: string;
     geloestIn: number;
 };

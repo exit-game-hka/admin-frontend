@@ -24,17 +24,17 @@ export const VeranstaltungListComponent: React.FC = () => {
     return (
         <CustomTableComponent
             headerCells={
-                <>
-                    <Box component="td" sx={{ width: "50px" }}></Box>
-                    <Box component="td">Name</Box>
+                <Box component="tr">
+                    <Box component="th" sx={{ width: "50px" }}></Box>
+                    <Box component="th">Name</Box>
                     {isSmall ?
                         null :
                         <>
-                            <Box component="td">Bezeichnung(Abkürzung)</Box>
-                            <Box component="td">Beschreibung</Box>
+                            <Box component="th">Bezeichnung(Abkürzung)</Box>
+                            <Box component="th">Beschreibung</Box>
                         </>
                     }
-                </>
+                </Box>
             }
             bodyRows={veranstaltungen.map((v) =>
                 <>
