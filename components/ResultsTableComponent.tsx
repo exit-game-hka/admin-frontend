@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Box, Stack} from "@mui/joy";
+import {Alert, Badge, Box, Typography} from "@mui/joy";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 import {CleanResult} from "@/contexts/ApplicationContext";
@@ -78,13 +78,26 @@ export const ResultsTableComponent: React.FC<Props> = (props) => {
                     <Box component="td" sx={{ textAlign: "center !important" }}>{row.triesPerTask.room6}</Box>
 
                     <Box component="td" sx={{ textAlign: "center !important" }}>
-                        {row.hasFinishedGame ? "Beendet" : "Nicht Beendet"}
+                        {row.hasFinishedGame}
                     </Box>
 
                     <Box component="td">
-                        <Stack spacing={"6px"}>
-                            {row.comments.map((c, i) => <Alert key={i}>{c}</Alert>)}
-                        </Stack>
+                        {row.comments.length > 0 ?
+                            <Alert sx={{ pr: row.comments.length > 1 ? 2 : 0 }}>
+                                <Typography noWrap sx={{ mr: row.comments.length > 1 ? 2 : 0 }}>{row.comments[0]}</Typography>
+                                {row.comments.length > 1 ?
+                                    <Badge
+                                        badgeContent={`+${row.comments.length - 1}`}
+                                        size={"md"}
+                                        badgeInset={"0 5px"}
+                                    >
+                                        <div></div>
+                                    </Badge>
+                                    : null
+                                }
+                            </Alert>
+                            : null
+                        }
                     </Box>
                 </React.Fragment>
             )}

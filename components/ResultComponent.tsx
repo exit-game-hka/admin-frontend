@@ -9,6 +9,8 @@ import {Interaktion} from "@/api/interaktion";
 import {Spieler} from "@/api/spieler";
 import {Aufgabe, CleanResult, TIME_UNIT} from "@/contexts/ApplicationContext";
 import {ResultsTableComponent} from "@/components/ResultsTableComponent";
+import {Kommentar} from "@/api/kommentar";
+import {Status} from "@/api/status";
 
 export const ResultComponent: React.FC = () => {
     const { semester } = useApplicationContext();
@@ -36,9 +38,17 @@ type PropsResultWrapper = {
 };
 const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
     const { semesterId, children } = props;
-    const { getErgebnisBySemesterId, getInteraktionBySpielerIdAndAufgabeId, getSpielerListBySemesterId } = useApplicationContext();
+    const {
+        getErgebnisBySemesterId,
+        getInteraktionBySpielerIdAndAufgabeId,
+        getSpielerListBySemesterId,
+        getKommentareBySemesterId,
+        getStatusBySemesterId,
+    } = useApplicationContext();
     const [interactionList, setInteractionList] = useState<Interaktion[] | undefined>(undefined);
     const [spielerList, setSpielerList] = useState<Spieler[] | undefined>(undefined);
+    const [kommentarList, setKommentarList] = useState<Kommentar[] | undefined>(undefined);
+    const [statusList, setStatusList] = useState<Status[] | undefined>(undefined);
 
     const {
         data: ergebnisList,
@@ -60,10 +70,22 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         setSpielerList(loadedSpieler);
     }, [getSpielerListBySemesterId, semesterId]);
 
+    const loadKommentare = useCallback(async () => {
+        const loadedKommentare = await getKommentareBySemesterId(semesterId);
+        setKommentarList(loadedKommentare);
+    }, [getKommentareBySemesterId, semesterId]);
+
+    const loadStatus = useCallback(async () => {
+        const loadedStatus = await getStatusBySemesterId(semesterId);
+        setStatusList(loadedStatus);
+    }, [getStatusBySemesterId, semesterId]);
+
     useEffect(() => {
         loadInteractions();
-        loadSpieler()
-    }, [ergebnisList, loadInteractions, loadSpieler]);
+        loadSpieler();
+        loadKommentare();
+        loadStatus();
+    }, [ergebnisList, loadInteractions, loadSpieler, loadKommentare, loadStatus]);
 
     const resolveNumberOfInteractionOfPlayerInRoom = useCallback((playerId: string, aufgabeId: string): string => {
         if (!interactionList) return "";
@@ -101,6 +123,24 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         return resultsOfPlayer.length.toString();
     }, [ergebnisList]);
 
+    const resolveKommentareOfPlayer = useCallback((playerId: string): string[] => {
+        if (!kommentarList) return [];
+        const kommentareOfPlayer = kommentarList.filter((k) => k.spielerId === playerId);
+
+        if (kommentareOfPlayer.length === 0) return [];
+
+        return kommentareOfPlayer.map((k) => k.inhalt);
+    }, [kommentarList]);
+
+    const resolveStatusOfPlayer = useCallback((playerId: string): string => {
+        if (!statusList) return "";
+        const statusOfPlayer = statusList.find((s) => s.spielerId === playerId);
+
+        if (!statusOfPlayer) return "";
+
+        return statusOfPlayer.istSpielBeendet ? "Beendet" : "Nicht Beendet";
+    }, [statusList]);
+
     const computeCleanResults = useCallback((spielerList: Spieler[]): CleanResult[] => {
         return spielerList.map((s) => ({
             playerId: s.spielerId,
@@ -129,8 +169,8 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
                 room5: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_5),
                 room6: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_6),
             },
-            hasFinishedGame: false,
-            comments: ["Test 1"],
+            hasFinishedGame: resolveStatusOfPlayer(s.id),
+            comments: resolveKommentareOfPlayer(s.id),
         }));
     }, [resolveNumberOfInteractionOfPlayerInRoom, resolveTimeSpentInRoomOfPlayer, resolveTotalPlayTimeOfPlayer, resolveTriesPerTaskOfPlayer]);
 
@@ -143,4 +183,4 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             {children ? children(computeCleanResults(spielerList)) : null}
         </>
     );
-}
+};

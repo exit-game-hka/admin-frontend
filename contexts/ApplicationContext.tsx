@@ -35,6 +35,13 @@ import {
     VeranstaltungDto
 } from "@/api/veranstaltung";
 import {Ergebnis, getErgebnisByAufgabeIdAndSpielerIdApi, getErgebnisBySemesterIdApi} from "@/api/ergebnis";
+import {AxiosResponse} from "axios";
+import {
+    getKommentarByIdApi,
+    getKommentareBySemesterIdApi, getKommentareBySpielerIdAndSemesterIdApi,
+    getKommentareByStudentIdApi,
+    Kommentar
+} from "@/api/kommentar";
 
 type ContextOutput = {
     semester: Semester | undefined;
@@ -66,6 +73,12 @@ type ContextOutput = {
     getErgebnisByAufgabeIdAndSpielerId: (aufgabeId: string, spielerId: string) => Promise<Ergebnis[]>;
     getErgebnisBySemesterId: (id: string) => Promise<Ergebnis[]>;
     //createErgebnis: (ergebnisDto: ErgebnisDto) => Promise<void>;
+    // Kommentare
+    getKommentarById: (id: string) => Promise<Kommentar>;
+    getKommentareBySemesterId: (semesterId: string) => Promise<Kommentar[]>;
+    getKommentareByStudentId: (studentId: string) => Promise<Kommentar[]>;
+    getKommentareBySpielerIdAndSemesterId: (studentId: string, semesterId: string) => Promise<Kommentar[]>;
+
 }
 
 // @ts-ignore
@@ -189,6 +202,26 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     //     await createErgebnisApi(ergebnisDto);
     // }
 
+    const getKommentarById = async (id: string): Promise<Kommentar> => {
+        const response = await getKommentarByIdApi(id);
+        return response.data;
+    };
+
+    const getKommentareBySemesterId = async (semesterId: string): Promise<Kommentar[]> => {
+        const response = await getKommentareBySemesterIdApi(semesterId);
+        return response.data;
+    };
+
+    const getKommentareByStudentId = async (studentId: string): Promise<Kommentar[]> => {
+        const response = await getKommentareByStudentIdApi(studentId);
+        return response.data;
+    };
+
+    const getKommentareBySpielerIdAndSemesterId = async (studentId: string, semesterId: string): Promise<Kommentar[]> => {
+        const response = await getKommentareBySpielerIdAndSemesterIdApi(studentId, semesterId);
+        return response.data;
+    };
+
     return (
         <ApplicationContext.Provider value={{
             semester,
@@ -217,6 +250,10 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getErgebnisByAufgabeIdAndSpielerId,
             getErgebnisBySemesterId,
             //createErgebnis,
+            getKommentarById,
+            getKommentareBySemesterId,
+            getKommentareByStudentId,
+            getKommentareBySpielerIdAndSemesterId,
         }}>
             {children}
         </ApplicationContext.Provider>
@@ -260,6 +297,6 @@ export type CleanResult = {
     timeSpentPerRoom: Rooms;
     totalPlayTime: string;
     triesPerTask: Rooms;
-    hasFinishedGame?: boolean | undefined;
+    hasFinishedGame: string;
     comments: string[];
 };
