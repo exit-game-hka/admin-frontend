@@ -2,9 +2,13 @@
 import React, { PropsWithChildren } from "react";
 import { Box } from "@mui/joy";
 import styled from "styled-components";
-import { AppBarComponent } from "@/components/AppBarComponent";
 import { SidebarComponent } from "@/components/SidebarComponent";
+import dynamic from "next/dynamic";
 
+const AppBarComponent = dynamic(
+    () => import("@/components/AppBarComponent"),
+    { ssr: false }
+)
 /**
  * Typ-Alias für die Eigenschaften der `LayoutComponent`.
  *
@@ -24,9 +28,9 @@ export const LayoutComponent: React.FC<Props> = (props: PropsWithChildren) => {
         <ApplicationMainContainer>
             <AppBarComponent />
             <SidebarAndMainContentContainer>
-                <StickyContainer>
+                <SidebarStickyContainer>
                     <SidebarComponent />
-                </StickyContainer>
+                </SidebarStickyContainer>
                 <MainBoxContainer component="main">{children}</MainBoxContainer>
             </SidebarAndMainContentContainer>
         </ApplicationMainContainer>
@@ -38,11 +42,14 @@ const ApplicationMainContainer = styled(Box)`
     overflow: hidden;
 `;
 
-const StickyContainer = styled(Box)<{ zindex?: number }>`
+const SidebarStickyContainer = styled(Box)<{ zindex?: number }>`
     position: sticky;
     top: 0;
     left: 0;
     z-index: ${(props) => props.zindex ?? "unset"};
+    @media screen and (max-width: 992px) {
+        display: none;
+    }
 `;
 
 const SidebarAndMainContentContainer = styled(Box)`
@@ -50,6 +57,10 @@ const SidebarAndMainContentContainer = styled(Box)`
     grid-template-columns: max-content 1fr;
     height: calc(100vh - var(--appbar-min-height));
     margin-top: var(--appbar-min-height);
+    
+    @media screen and (max-width: 992px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const MainBoxContainer = styled(Box)`

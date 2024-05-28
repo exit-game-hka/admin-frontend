@@ -205,9 +205,9 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                 <Stack spacing={"var(--gap-2)"}>
                     <Typography level="title-lg">Kommentare</Typography>
                     <Stack spacing={"var(--gap-1)"}>
-                        {kommentarList.length === 0 ? <Alert>Keine Daten gefunden</Alert> : kommentarList.map((k) =>
+                        {kommentarList.length === 0 ? <Alert>Keine Daten gefunden</Alert> : kommentarList.map((k, index) =>
                             <Sheet
-                                key={k.inhalt}
+                                key={`${k.inhalt}${index}`}
                                 variant={"outlined"}
                                 sx={{
                                     p: "var(--gap-2)",
@@ -226,7 +226,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
 const MainContainer = styled(Box)`
     display: grid;
     grid-gap: var(--gap-4);
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: minmax(300px, 1fr) 4fr;
     align-items: start;
     align-content: start;
     @media screen and (max-width: 900px) {

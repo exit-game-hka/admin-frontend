@@ -1,7 +1,7 @@
 import useApplicationContext from "@/hooks/useApplicationContext";
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Interaktion} from "@/api/interaktion";
-import {getSpielerByIdApi, Spieler} from "@/api/spieler";
+import {Spieler} from "@/api/spieler";
 import {Kommentar} from "@/api/kommentar";
 import {Status} from "@/api/status";
 import useSWR from "swr";
@@ -63,7 +63,6 @@ export const usePlayerResult = (playerId: string): Output => {
 
         const loadKommentare = async () => {
             const loadedKommentare = await getKommentareBySpielerId(playerId);
-            console.log("loadedKommentare: ", loadedKommentare);
             setKommentarList(loadedKommentare);
         };
 
@@ -71,7 +70,7 @@ export const usePlayerResult = (playerId: string): Output => {
         loadStatus();
         loadInteractions();
         loadKommentare();
-    }, [getSpielerById, getStatusBySpielerId, playerId]);
+    }, [getInteraktionBySpielerId, getKommentareBySpielerId, getSpielerById, getStatusBySpielerId, playerId]);
 
     useEffect(() => {
         const loadSemester = async () => {

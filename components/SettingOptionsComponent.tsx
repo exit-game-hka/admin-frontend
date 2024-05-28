@@ -11,12 +11,20 @@ import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined';
 import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
-import {Typography} from "@mui/joy";
+import {Typography, useColorScheme} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
+import Autocomplete from '@mui/joy/Autocomplete';
+import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 
 type GroupName = "Benutzer-Infos" | "Darstellung" | "Anzeige" | "Über die Anwendung";
-export const SettingOptionsComponent: React.FC = () => {
+const SettingOptionsComponent: React.FC = () => {
     const {isSmall} = useMediaQuery();
+    const { mode, setMode } = useColorScheme();
+
+    const modeOptions = [
+        {label: "Dunkel", value: "dark"},
+        {label: "Hell", value: "light"},
+    ];
 
     const userInfo: Group<GroupName> = {
         name: "Benutzer-Infos",
@@ -48,7 +56,15 @@ export const SettingOptionsComponent: React.FC = () => {
             {
                 icon: <LightModeOutlinedIcon fontSize="small" />,
                 label: "Modus",
-                value: "Dunkel",
+                value: (
+                    <Autocomplete
+                        value={mode === "dark" ? modeOptions[0] : modeOptions[1]}
+                        options={modeOptions}
+                        getOptionLabel={(o) => o.label}
+                        onChange={(_, newValue) => setMode(newValue?.value as Mode)}
+                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                    />
+                ),
             },
             {
                 icon: <WatchLaterOutlinedIcon fontSize="small" />,
@@ -113,3 +129,5 @@ export const SettingOptionsComponent: React.FC = () => {
         <DetailsListComponent groups={allGroups} />
     );
 };
+
+export default SettingOptionsComponent;

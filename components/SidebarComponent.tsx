@@ -1,5 +1,5 @@
 "use client";
-import React, {ReactNode, useEffect, useState} from "react";
+import React, {ReactNode, useState} from "react";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import KeyboardDoubleArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowLeftOutlined";
 import KeyboardDoubleArrowRightOutlinedIcon from "@mui/icons-material/KeyboardDoubleArrowRightOutlined";
@@ -18,6 +18,11 @@ import SportsKabaddiOutlinedIcon from '@mui/icons-material/SportsKabaddiOutlined
 import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import Modal from '@mui/joy/Modal';
+import ModalClose from '@mui/joy/ModalClose';
+import ModalDialog from '@mui/joy/ModalDialog';
+import DialogTitle from '@mui/joy/DialogTitle';
+import MenuIcon from "@mui/icons-material/Menu";
 
 const INITIAL_SIDEBAR_STATE = true;
 
@@ -32,60 +37,71 @@ type NavigationButton = {
     onClick: () => void;
 };
 
+type Props = {
+    isMobile?: boolean |undefined;
+    onButtonClick?: () => void;
+}
 /**
  * React-Komponente für die Seitenleiste der Anwendung.
  */
-export const SidebarComponent: React.FC = () => {
+export const SidebarComponent: React.FC<Props> = (props) => {
+    const { isMobile, onButtonClick } = props;
     const [isOpen, setIsOpen] = useState<boolean>(INITIAL_SIDEBAR_STATE);
     const router = useRouter();
     const pathname = usePathname();
     const { isSmall } = useMediaQuery();
 
-    useEffect(() => {
-        if (!isSmall) {
-            setIsOpen(true);
-            return;
-        }
-        setIsOpen(false);
-    }, [isSmall]);
+    // useEffect(() => {
+    //     if (!isSmall && isMobile) {
+    //         setIsOpen(true);
+    //         return;
+    //     }
+    //     setIsOpen(false);
+    // }, [isMobile, isSmall]);
+
+    const handleClick = (path: string) => {
+        router.push(path);
+        if (!onButtonClick) return;
+        onButtonClick()
+    }
 
     const upperButtons: NavigationButton[] = [
         {
             label: "Startseite",
             icon: <DashboardOutlinedIcon />,
             isActive: pathname === "/",
-            onClick: () => router.push("/"),
+            onClick: () => handleClick("/"),
         },
         {
             label: "Semester",
             icon: <SchoolOutlinedIcon />,
             isActive: pathname === "/semester",
-            onClick: () => router.push("/semester"),
+            onClick: () => handleClick("/semester"),
 
         },
         {
             label: "Veranstaltungen",
             icon: <SportsEsportsOutlinedIcon />,
             isActive: pathname.includes("/lessons"),
-            onClick: () => router.push("/lessons"),
+            onClick: () => handleClick("/lessons"),
         },
         {
             label: "Spieler",
             icon: <SportsKabaddiOutlinedIcon />,
             isActive: pathname.includes("/players"),
-            onClick: () => router.push("/players"),
+            onClick: () => handleClick("/players"),
         },
         {
             label: "Räume",
             icon: <MeetingRoomOutlinedIcon />,
             isActive: pathname.includes("/rooms"),
-            onClick: () => router.push("/rooms"),
+            onClick: () => handleClick("/rooms"),
         },
         {
             label: "Ergebnisse",
             icon: <AssessmentOutlinedIcon />,
             isActive: pathname.includes("/results"),
-            onClick: () => router.push("/results"),
+            onClick: () => handleClick("/results"),
         },
     ];
 
@@ -94,17 +110,19 @@ export const SidebarComponent: React.FC = () => {
             label: "Einstellungen",
             icon: <SettingsOutlinedIcon />,
             isActive: pathname.includes("/settings"),
-            onClick: () => router.push("/settings"),
+            onClick: () => handleClick("/settings"),
         },
-        {
-            label: "Seitenleiste ausklappen",
-            icon: isOpen ? (
-                <KeyboardDoubleArrowLeftOutlinedIcon />
-            ) : (
-                <KeyboardDoubleArrowRightOutlinedIcon />
-            ),
-            onClick: () => setIsOpen((prevState) => !prevState),
-        },
+        ...(isMobile ? [] : [
+            {
+                label: "Seitenleiste ausklappen",
+                icon: isOpen ? (
+                    <KeyboardDoubleArrowLeftOutlinedIcon />
+                ) : (
+                    <KeyboardDoubleArrowRightOutlinedIcon />
+                ),
+                onClick: () => setIsOpen((prevState) => !prevState),
+            }
+        ]),
     ];
 
     return (
@@ -171,6 +189,22 @@ const ButtonListComponent: React.FC<PropsButtonList> = (
         </List>
     );
 };
+
+export const SidebarOnMobileComponent: React.FC = () => {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    return (
+        <React.Fragment>
+            <MenuIcon onClick={() => setIsOpen(!isOpen)}/>
+            <Modal open={isOpen} onClose={() => setIsOpen(false)}>
+                <ModalDialog layout={"fullscreen"}>
+                    <ModalClose />
+                    <DialogTitle>{process.env.NEXT_PUBLIC_APPLICATION_NAME}</DialogTitle>
+                    <SidebarComponent isMobile={true} onButtonClick={() => setIsOpen(false)} />
+                </ModalDialog>
+            </Modal>
+        </React.Fragment>
+    );
+}
 
 const SidebarWrapper = styled(Box)`
     display: grid;
