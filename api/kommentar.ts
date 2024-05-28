@@ -20,12 +20,12 @@ export const getKommentareBySemesterIdApi = async (semesterId: string): Promise<
     return await axiosClient.get<Kommentar[]>(`${ENDPOINT}?semester_id=${semesterId}`);
 };
 
-export const getKommentareByStudentIdApi = async (studentId: string): Promise<AxiosResponse<Kommentar[]>> => {
-    return await axiosClient.get<Kommentar[]>(`${ENDPOINT}?student_id=${studentId}`);
+export const getKommentareBySpielerIdApi = async (studentId: string): Promise<AxiosResponse<Kommentar[]>> => {
+    return await axiosClient.get<Kommentar[]>(`${ENDPOINT}?spieler_id=${studentId}`);
 };
 
 export const getKommentareBySpielerIdAndSemesterIdApi = async (studentId: string, semesterId: string): Promise<AxiosResponse<Kommentar[]>> => {
-    return await axiosClient.get<Kommentar[]>(`${ENDPOINT}?student_id=${studentId}&semester_id=${semesterId}`);
+    return await axiosClient.get<Kommentar[]>(`${ENDPOINT}?spieler_id=${studentId}&semester_id=${semesterId}`);
 };
 
 export const createKommentarApi = async (kommentarDto: KommentarDto) => {

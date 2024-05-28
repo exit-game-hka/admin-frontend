@@ -44,6 +44,12 @@ export const PageWrapperComponent: React.FC<Props> = (props) => {
                 justifyItems={"space-between"}
                 alignItems={"center"}
                 alignContent={"center"}
+                sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 100,
+                    backgroundColor: theme => theme.vars.palette.background.body,
+                }}
             >
                 <TitleAndSubtitleContainer
                     component="div"

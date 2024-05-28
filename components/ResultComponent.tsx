@@ -7,7 +7,7 @@ import useSWR from "swr";
 import {Ergebnis} from "@/api/ergebnis";
 import {Interaktion} from "@/api/interaktion";
 import {Spieler} from "@/api/spieler";
-import {Aufgabe, CleanResult, TIME_UNIT} from "@/contexts/ApplicationContext";
+import {AufgabeId, CleanResult, TIME_UNIT} from "@/contexts/ApplicationContext";
 import {ResultsTableComponent} from "@/components/ResultsTableComponent";
 import {Kommentar} from "@/api/kommentar";
 import {Status} from "@/api/status";
@@ -58,6 +58,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
     const loadInteractions = useCallback(async () => {
         if (!ergebnisList) return;
+        // TODO: Replace this with a new API -> getInteraktionBySemesterId (Add this new API on the Backend)
         const loadedInteractions = await Promise.all(
             ergebnisList.map((e) => getInteraktionBySpielerIdAndAufgabeId(e.spielerId, e.aufgabeId))
         );
@@ -143,31 +144,32 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
     const computeCleanResults = useCallback((spielerList: Spieler[]): CleanResult[] => {
         return spielerList.map((s) => ({
-            playerId: s.spielerId,
+            spielerId: s.spielerId,
+            idOfPlayer: s.id,
             interactionPerRoom: {
-                room1: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_1),
-                room2: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_2),
-                room3: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_3),
-                room4: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_4),
-                room5: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_5),
-                room6: resolveNumberOfInteractionOfPlayerInRoom(s.id, Aufgabe.AUFGABE_6),
+                room1: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_1),
+                room2: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_2),
+                room3: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_3),
+                room4: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_4),
+                room5: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_5),
+                room6: resolveNumberOfInteractionOfPlayerInRoom(s.id, AufgabeId.AUFGABE_6),
             },
             timeSpentPerRoom: {
-                room1: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_1),
-                room2: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_2),
-                room3: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_3),
-                room4: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_4),
-                room5: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_5),
-                room6: resolveTimeSpentInRoomOfPlayer(s.id, Aufgabe.AUFGABE_6),
+                room1: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_1),
+                room2: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_2),
+                room3: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_3),
+                room4: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_4),
+                room5: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_5),
+                room6: resolveTimeSpentInRoomOfPlayer(s.id, AufgabeId.AUFGABE_6),
             },
             totalPlayTime: resolveTotalPlayTimeOfPlayer(s.id),
             triesPerTask: {
-                room1: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_1),
-                room2: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_2),
-                room3: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_3),
-                room4: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_4),
-                room5: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_5),
-                room6: resolveTriesPerTaskOfPlayer(s.id, Aufgabe.AUFGABE_6),
+                room1: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_1),
+                room2: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_2),
+                room3: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_3),
+                room4: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_4),
+                room5: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_5),
+                room6: resolveTriesPerTaskOfPlayer(s.id, AufgabeId.AUFGABE_6),
             },
             hasFinishedGame: resolveStatusOfPlayer(s.id),
             comments: resolveKommentareOfPlayer(s.id),

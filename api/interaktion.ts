@@ -17,6 +17,10 @@ export const getInteraktionBySpielerIdAndAufgabeIdApi = async (spielerId: string
     return await axiosClient.get<Interaktion[]>(`${ENDPOINT}?spieler_id=${spielerId}&aufgabe_id=${aufgabeId}`);
 };
 
+export const getInteraktionBySpielerIdApi = async (spielerId: string): Promise<AxiosResponse<Interaktion[]>> => {
+    return await axiosClient.get<Interaktion[]>(`${ENDPOINT}?spieler_id=${spielerId}`);
+};
+
 export const createInteraktionApi = async (interaktionDto: InteraktionDto) => {
     const payload = JSON.stringify(interaktionDto);
     return await axiosClient.post(ENDPOINT, payload);

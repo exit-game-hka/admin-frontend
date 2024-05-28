@@ -75,20 +75,23 @@ const PlayerListComponent: React.FC<Props> = (props) => {
                     }
                 </Box>
             }
-            bodyRows={spieler.slice(0, limit).map((spieler) =>
-                <>
-                    <Box component="td" sx={{ width: "50px" }}>
-                        <AccountCircleOutlinedIcon />
-                    </Box>
-                    <Box component="td">{spieler.spielerId}</Box>
-                    <Box component="td">{getSemester(spieler.semesterId).bezeichnung}</Box>
-                    {isSmall ?
-                        null :
-                        <Box component="td">
-                            {getVeranstaltung(spieler.veranstaltungId).bezeichnung} - {getVeranstaltung(spieler.veranstaltungId).name}
-                        </Box>
-                    }
-                </>
+            bodyRows={spieler.slice(0, limit).map((spieler) => ({
+                    content: (
+                        <React.Fragment key={spieler.spielerId}>
+                            <Box component="td" sx={{ width: "50px" }}>
+                                <AccountCircleOutlinedIcon />
+                            </Box>
+                            <Box component="td">{spieler.spielerId}</Box>
+                            <Box component="td">{getSemester(spieler.semesterId).bezeichnung}</Box>
+                            {isSmall ?
+                                null :
+                                <Box component="td">
+                                    {getVeranstaltung(spieler.veranstaltungId).bezeichnung} - {getVeranstaltung(spieler.veranstaltungId).name}
+                                </Box>
+                            }
+                        </React.Fragment>
+                    )
+                })
             )}
         />
     );

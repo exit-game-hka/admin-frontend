@@ -36,20 +36,23 @@ export const SemesterListComponent: React.FC = () => {
                     }
                 </Box>
             }
-            bodyRows={semesters.map((s) =>
-                <>
-                    <Box component="td" sx={{ width: "50px" }}>
-                        <SchoolOutlinedIcon />
-                    </Box>
-                    <Box component="td">{s.bezeichnung}</Box>
-                    {isSmall ?
-                        null :
-                        <>
-                            <Box component="td">{s.start.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
-                            <Box component="td">{s.ende.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
-                        </>
-                    }
-                </>
+            bodyRows={semesters.map((s, index) => ({
+                    content: (
+                        <React.Fragment key={index}>
+                            <Box component="td" sx={{ width: "50px" }}>
+                                <SchoolOutlinedIcon />
+                            </Box>
+                            <Box component="td">{s.bezeichnung}</Box>
+                            {isSmall ?
+                                null :
+                                <>
+                                    <Box component="td">{s.start.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
+                                    <Box component="td">{s.ende.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric"})}</Box>
+                                </>
+                            }
+                        </React.Fragment>
+                    )
+                })
             )}
         />
     );

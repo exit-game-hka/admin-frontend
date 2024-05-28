@@ -36,22 +36,25 @@ export const VeranstaltungListComponent: React.FC = () => {
                     }
                 </Box>
             }
-            bodyRows={veranstaltungen.map((v) =>
-                <>
-                    <Box component="td" sx={{ width: "50px" }}>
-                        <SportsEsportsOutlinedIcon />
-                    </Box>
-                    <Box component="td">{v.name}</Box>
-                    {isSmall ?
-                        null :
-                        <>
-                            <Box component="td">{v.bezeichnung}</Box>
-                            <Box component="td">
-                                <Typography noWrap>{v.beschreibung}</Typography>
+            bodyRows={veranstaltungen.map((v) => ({
+                    content: (
+                        <React.Fragment key={v.id}>
+                            <Box component="td" sx={{ width: "50px" }}>
+                                <SportsEsportsOutlinedIcon />
                             </Box>
-                        </>
-                    }
-                </>
+                            <Box component="td">{v.name}</Box>
+                            {isSmall ?
+                                null :
+                                <>
+                                    <Box component="td">{v.bezeichnung}</Box>
+                                    <Box component="td">
+                                        <Typography noWrap>{v.beschreibung}</Typography>
+                                    </Box>
+                                </>
+                            }
+                        </React.Fragment>
+                    )
+                })
             )}
         />
     );

@@ -13,7 +13,7 @@ export type VeranstaltungDto = Omit<Veranstaltung, "id">;
 const ENDPOINT = "/veranstaltung" as const;
 
 export const getVeranstaltungByIdApi = async (id: string): Promise<AxiosResponse<Veranstaltung>> => {
-    return await axiosClient.get<Veranstaltung>(ENDPOINT);
+    return await axiosClient.get<Veranstaltung>(`${ENDPOINT}/${id}`);
 };
 
 export const getAllVeranstaltungenApi = async (): Promise<AxiosResponse<Veranstaltung[]>> => {

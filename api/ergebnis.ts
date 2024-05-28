@@ -21,6 +21,10 @@ export const getErgebnisByAufgabeIdAndSpielerIdApi = async (aufgabeId: string, s
     return await axiosClient.get<Ergebnis[]>(`${ENDPOINT}?aufgabe_id=${aufgabeId}&spieler_id=${spielerId}`);
 };
 
+export const getErgebnisBySpielerIdApi = async (spielerId: string): Promise<AxiosResponse<Ergebnis[]>> => {
+    return await axiosClient.get<Ergebnis[]>(`${ENDPOINT}?spieler_id=${spielerId}`);
+};
+
 export const getErgebnisBySemesterIdApi = async (id: string): Promise<AxiosResponse<Ergebnis[]>> => {
     return await axiosClient.get<Ergebnis[]>(`${ENDPOINT}/semester/${id}`);
 };

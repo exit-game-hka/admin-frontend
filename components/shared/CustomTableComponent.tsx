@@ -3,9 +3,14 @@ import React, {ReactNode} from 'react';
 import {Box, Table, TableProps} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 
+type TableBodyRow = {
+    content: ReactNode;
+    onClick?: (() => void) | undefined;
+};
+
 type Props = TableProps & {
     headerCells: ReactNode;
-    bodyRows: ReactNode[];
+    bodyRows: TableBodyRow[];
 };
 
 export const CustomTableComponent: React.FC<Props> = (props) => {
@@ -55,6 +60,7 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
                     <Box
                         component="tr"
                         key={index}
+                        onClick={row.onClick}
                         sx={{
                             "&:hover": {
                                 "& *": {
@@ -66,7 +72,7 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
                             },
                         }}
                     >
-                        {row}
+                        {row.content}
                     </Box>
                 )}
             </Box>
