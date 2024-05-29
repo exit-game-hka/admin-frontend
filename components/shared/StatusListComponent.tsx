@@ -30,7 +30,7 @@ export const StatusListComponent: React.FC = () => {
 
         if (resultsOfPlayer.length === 0) return 0;
 
-        return resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0);
+        return resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + (curr.geloestIn ?? 0), 0);
     }, [ergebnisList]);
 
     const resolveAveragePlayTime = (): string => {
