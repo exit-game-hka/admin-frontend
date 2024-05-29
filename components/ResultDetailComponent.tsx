@@ -46,7 +46,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
         if (!status) return { statusText: "unbekannt", isDone: false };
         if (status.istSpielAbgebrochen) return { statusText: "Vorzeitig abgebrochen", isDone: false };
         if (status.istSpielBeendet) return { statusText: "Erfolgreich beendet", isDone: true };
-        return { statusText: "", isDone: false };
+        return { statusText: "Nicht beendet", isDone: false };
     }
 
     const groupedListKeySeparator = "@" as const;
