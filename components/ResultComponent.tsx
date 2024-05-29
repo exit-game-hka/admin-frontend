@@ -145,7 +145,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
         if (!resultOfPlayer) return "";
 
-        return `${resultOfPlayer.geloestIn.toFixed(0)} ${TIME_UNIT}`;
+        return `${resultOfPlayer.geloestIn?.toFixed(0)} ${TIME_UNIT}`;
     }, [ergebnisList]);
 
     const resolveTotalPlayTimeOfPlayer = useCallback((playerId: string): string => {
@@ -154,7 +154,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
         if (resultsOfPlayer.length === 0) return "";
 
-        return `${resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0).toFixed(0)} ${TIME_UNIT}`;
+        return `${resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0)?.toFixed(0)} ${TIME_UNIT}`;
     }, [ergebnisList]);
 
     const resolveTriesPerTaskOfPlayer = useCallback((playerId: string, aufgabeId: string): string => {
