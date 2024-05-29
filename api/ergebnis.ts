@@ -10,7 +10,7 @@ export type Ergebnis = {
     aufgabeId: string;
     aufgabe: Aufgabe;
     semesterId: string;
-    geloestIn: number;
+    geloestIn?: number | undefined | null;
 };
 
 export type ErgebnisDto = Omit<Ergebnis, "id">;

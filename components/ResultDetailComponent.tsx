@@ -143,7 +143,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                 <FunctionsOutlinedIcon />
                                 <span>Summe: </span>
                                 {`${ergebnisList
-                                    .reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0)
+                                    .reduce((acc: number, curr: Ergebnis) => acc + (curr.geloestIn ?? 0), 0)
                                     ?.toFixed(0)} ${TIME_UNIT}`
                                 }
                             </Alert>
@@ -155,14 +155,16 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                         <Box component="th">Dauer</Box>
                                     </Box>
                                 }
-                                bodyRows={ergebnisList.map((e, index) => ({
+                                bodyRows={groupedErgebnisList.map((g, index) => ({
                                     content: (
                                         <React.Fragment key={index}>
                                             <Box component="td" sx={{ width: "50px" }}>
                                                 <AccessAlarmsOutlinedIcon />
                                             </Box>
-                                            <Box component="td">{resolveTaskNumber(e.aufgabeId)}</Box>
-                                            <Box component="td">{e.geloestIn?.toFixed(0)} {TIME_UNIT}</Box>
+                                            <Box component="td">{resolveTaskNumber(g[0])}</Box>
+                                            <Box component="td">
+                                                {(g[1]?.reduce((a, b) => a + (b.geloestIn ?? 0), 0) ?? 0)?.toFixed(0)} {TIME_UNIT}
+                                            </Box>
                                         </React.Fragment>
                                     )
                                 }))}

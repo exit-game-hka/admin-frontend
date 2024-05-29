@@ -141,11 +141,16 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
     const resolveTimeSpentInRoomOfPlayer = useCallback((playerId: string, aufgabeId: string): string => {
         if (!ergebnisList) return "";
-        const resultOfPlayer = ergebnisList.find((e) => e.spielerId === playerId && e.aufgabeId === aufgabeId);
+        const resultOfPlayer = ergebnisList.filter((e) => e.spielerId === playerId && e.aufgabeId === aufgabeId);
 
-        if (!resultOfPlayer) return "";
+        if (resultOfPlayer.length === 0) return "";
 
-        return `${resultOfPlayer.geloestIn?.toFixed(0)} ${TIME_UNIT}`;
+        const playTime = resultOfPlayer
+            .filter((e) => e.geloestIn !== null &&  e.geloestIn !== undefined)
+            .map((e) => e.geloestIn as number)
+            .reduce((acc, curr) => acc + curr, 0);
+
+        return `${playTime.toFixed(0)} ${TIME_UNIT}`;
     }, [ergebnisList]);
 
     const resolveTotalPlayTimeOfPlayer = useCallback((playerId: string): string => {
@@ -154,7 +159,12 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
 
         if (resultsOfPlayer.length === 0) return "";
 
-        return `${resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0)?.toFixed(0)} ${TIME_UNIT}`;
+        const playTimeFromResult = resultsOfPlayer
+            .filter((e) => e.geloestIn !== null &&  e.geloestIn !== undefined)
+            .map((e) => e.geloestIn as number)
+            .reduce((acc, curr) => acc + curr, 0);
+
+        return `${playTimeFromResult.toFixed(0)} ${TIME_UNIT}`;
     }, [ergebnisList]);
 
     const resolveTriesPerTaskOfPlayer = useCallback((playerId: string, aufgabeId: string): string => {
