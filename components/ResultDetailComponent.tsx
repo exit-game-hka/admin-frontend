@@ -144,7 +144,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                 <span>Summe: </span>
                                 {`${ergebnisList
                                     .reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0)
-                                    .toFixed(0)} ${TIME_UNIT}`
+                                    ?.toFixed(0)} ${TIME_UNIT}`
                                 }
                             </Alert>
                             <CustomTableComponent
@@ -162,7 +162,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                                 <AccessAlarmsOutlinedIcon />
                                             </Box>
                                             <Box component="td">{resolveTaskNumber(e.aufgabeId)}</Box>
-                                            <Box component="td">{e.geloestIn.toFixed(0)} {TIME_UNIT}</Box>
+                                            <Box component="td">{e.geloestIn?.toFixed(0)} {TIME_UNIT}</Box>
                                         </React.Fragment>
                                     )
                                 }))}
