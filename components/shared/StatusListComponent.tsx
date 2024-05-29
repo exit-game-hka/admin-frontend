@@ -1,26 +1,56 @@
 "use client";
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Alert, Box} from "@mui/joy";
 import styled from "styled-components";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import useSWR from "swr";
 import {StatsCardComponent} from "@/components/shared/StatsCardComponent";
 import {Status} from "@/api/status";
+import {Ergebnis} from "@/api/ergebnis";
+import {TIME_UNIT} from "@/contexts/ApplicationContext";
 
 export const StatusListComponent: React.FC = () => {
-    const { semester, getStatusBySemesterId } = useApplicationContext();
+    const { semester, getStatusBySemesterId, getErgebnisBySemesterId } = useApplicationContext();
 
     const {
         data: statusList,
         isLoading,
         error,
-    } = useSWR<Status[]>("getStatusBySemesterId", async () => await getStatusBySemesterId(semester?.id!));
+    } = useSWR<Status[]>(`getStatusBySemesterId-${semester?.id}`, async () => await getStatusBySemesterId(semester?.id!));
+
+    const {
+        data: ergebnisList,
+        isLoading: isLoadingErgebnis,
+        error: errorErgebnis,
+    } = useSWR<Ergebnis[]>(`getErgebnisBySemesterId-${semester?.id}`, async () => await getErgebnisBySemesterId(semester?.id!));
+
+    const resolveTotalPlayTimeOfPlayer = useCallback((playerId: string): number => {
+        if (!ergebnisList) return 0;
+        const resultsOfPlayer = ergebnisList.filter((e) => e.spielerId === playerId);
+
+        if (resultsOfPlayer.length === 0) return 0;
+
+        return resultsOfPlayer.reduce((acc: number, curr: Ergebnis) => acc + curr.geloestIn, 0);
+    }, [ergebnisList]);
+
+    const resolveAveragePlayTime = (): string => {
+        if (!ergebnisList) return `0 ${TIME_UNIT}`;
+        const allPlayerIds = ergebnisList.map((e) => e.spieler.id);
+
+        const playerIdsDistinct = allPlayerIds.reduce((acc: string[], curr: string) => acc.find((i) => i === curr) ? acc : [...acc, curr], []);
+
+        const totalPlayTimeOfPlayer = playerIdsDistinct.map((id) => resolveTotalPlayTimeOfPlayer(id));
+
+        const sum = totalPlayTimeOfPlayer.reduce((acc: number, curr: number) => acc + curr, 0);
+
+        return `${(sum / playerIdsDistinct.length).toFixed(0)} ${TIME_UNIT}`;
+    }
 
     if (!semester) return <Alert color="warning">Wählen Sie erst ein Semester aus </Alert>
 
     if (isLoading || !statusList) return <Alert color="warning">Wird geladen...</Alert>
 
-    if (error) return <Alert color="danger">Fehler beim Laden der Daten</Alert>
+    if (error || errorErgebnis) return <Alert color="danger">Fehler beim Laden der Daten</Alert>
 
     return (
         <StatusListContainer>
@@ -38,7 +68,7 @@ export const StatusListComponent: React.FC = () => {
             />
             <StatsCardComponent
                 label={"Durchschnittliche Spieldauer"}
-                value={1000}
+                value={resolveAveragePlayTime()}
             />
         </StatusListContainer>
     );

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const PlayersPage: React.FC = async () => {
     const addNewPlayerButton = (
-        <Link href={"/players/add"}>
+        <Link href={"/players/add"} style={{ display: "grid" }}>
             <Button>Neuer Spieler</Button>
         </Link>
     );

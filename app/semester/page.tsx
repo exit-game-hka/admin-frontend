@@ -6,7 +6,7 @@ import {Button} from "@mui/joy";
 
 const SemesterPage: React.FC = () => {
     const rightContent = (
-        <Link href={"/semester/add"}>
+        <Link href={"/semester/add"} style={{ display: "grid" }}>
             <Button>Neues Semester</Button>
         </Link>
     );

@@ -6,7 +6,7 @@ import {VeranstaltungListComponent} from "@/components/VeranstaltungListComponen
 
 const EventPage: React.FC = () => {
     const rightContent = (
-        <Link href={"/lessons/add"}>
+        <Link href={"/lessons/add"} style={{ display: "grid" }}>
             <Button>Neue Veranstaltung</Button>
         </Link>
     );
