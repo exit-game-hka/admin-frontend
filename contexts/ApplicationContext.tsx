@@ -2,7 +2,8 @@
 import React, {createContext, PropsWithChildren, useState} from "react";
 import {
     createInteraktionApi,
-    getInteraktionBySpielerIdAndAufgabeIdApi, getInteraktionBySpielerIdApi,
+    getInteraktionBySpielerIdAndAufgabeIdApi,
+    getInteraktionBySpielerIdApi,
     Interaktion,
     InteraktionDto
 } from "@/api/interaktion";
@@ -42,11 +43,12 @@ import {
 } from "@/api/ergebnis";
 import {
     getKommentarByIdApi,
-    getKommentareBySemesterIdApi, getKommentareBySpielerIdAndSemesterIdApi,
+    getKommentareBySemesterIdApi,
+    getKommentareBySpielerIdAndSemesterIdApi,
     getKommentareBySpielerIdApi,
     Kommentar
 } from "@/api/kommentar";
-import {AxiosResponse} from "axios";
+import exportFromJSON from "export-from-json";
 
 type ContextOutput = {
     semester: Semester | undefined;
@@ -280,6 +282,45 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         </ApplicationContext.Provider>
     )
 };
+
+const transformResultsForExport = (results: CleanResult[]): Record<string, any>[] => {
+    return results.map((r) => {
+        return {
+            "Spieler-ID": r.spielerId,
+            "Anzahl Interaktionen im 1.Raum": r.interactionPerRoom.room1,
+            "Anzahl Interaktionen im 2.Raum": r.interactionPerRoom.room2,
+            "Anzahl Interaktionen im 3.Raum": r.interactionPerRoom.room3,
+            "Anzahl Interaktionen im 4.Raum": r.interactionPerRoom.room4,
+            "Anzahl Interaktionen im 5.Raum": r.interactionPerRoom.room5,
+            "Anzahl Interaktionen im 6.Raum": r.interactionPerRoom.room6,
+            "Dauer im 1.Raum": r.timeSpentPerRoom.room1,
+            "Dauer im 2.Raum": r.timeSpentPerRoom.room2,
+            "Dauer im 3.Raum": r.timeSpentPerRoom.room3,
+            "Dauer im 4.Raum": r.timeSpentPerRoom.room4,
+            "Dauer im 5.Raum": r.timeSpentPerRoom.room5,
+            "Dauer im 6.Raum": r.timeSpentPerRoom.room6,
+            "Dauer insgesamt": r.totalPlayTime,
+            "Anzahl Versuche im 1.Raum": r.triesPerTask.room1,
+            "Anzahl Versuche im 2.Raum": r.triesPerTask.room2,
+            "Anzahl Versuche im 3.Raum": r.triesPerTask.room3,
+            "Anzahl Versuche im 4.Raum": r.triesPerTask.room4,
+            "Anzahl Versuche im 5.Raum": r.triesPerTask.room5,
+            "Anzahl Versuche im 6.Raum": r.triesPerTask.room6,
+            "Spiel beendet": r.hasFinishedGame,
+            "Kommentare des Nutzers": r.comments.join("\n\n"),
+        }
+    });
+}
+export const exportResult = (results: CleanResult[], fileName: string, format: keyof typeof exportFromJSON.types) => {
+    const transformedResults = transformResultsForExport(results);
+    const formattedFileName = `${fileName}-${new Date().toLocaleDateString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "2-digit", year: "numeric"})}`
+    exportFromJSON({
+        data: transformedResults,
+        fileName: formattedFileName,
+        exportType: format,
+        replacer: (_, v) => v === null || undefined ? "" : v.toString(),
+    });
+}
 
 const convertToSemesterModel = (semester: Semester): Semester => {
     return {

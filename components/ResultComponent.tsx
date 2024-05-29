@@ -1,30 +1,72 @@
 "use client";
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Box, Stack} from "@mui/joy";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Alert, Box, Menu, MenuItem, Stack} from "@mui/joy";
 import {SemesterSelectionComponent} from "@/components/shared/SemesterSelectionComponent";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import useSWR from "swr";
 import {Ergebnis} from "@/api/ergebnis";
 import {Interaktion} from "@/api/interaktion";
 import {Spieler} from "@/api/spieler";
-import {AufgabeId, CleanResult, TIME_UNIT} from "@/contexts/ApplicationContext";
+import {AufgabeId, CleanResult, exportResult, TIME_UNIT} from "@/contexts/ApplicationContext";
 import {ResultsTableComponent} from "@/components/ResultsTableComponent";
 import {Kommentar} from "@/api/kommentar";
 import {Status} from "@/api/status";
+import exportFromJSON from "export-from-json";
+import {createPortal} from "react-dom";
+import {useMediaQuery} from "@/hooks/useMediaQuery";
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
+import Dropdown from '@mui/joy/Dropdown';
+import MenuButton from '@mui/joy/MenuButton';
 
 export const ResultComponent: React.FC = () => {
     const { semester } = useApplicationContext();
+    const { isSmall } = useMediaQuery();
+    const exportButtonPortalRef = useRef<HTMLDivElement>();
+
+    const handleExport = (results: CleanResult[], format: keyof typeof exportFromJSON.types) => {
+        exportResult(results, "ergebnisse", format);
+    }
 
     return (
         <Stack spacing={"var(--gap-4)"}>
-            <Stack>
-                <Box sx={{ alignSelf: "flex-start" }}>
+            <Stack
+                spacing={"var(--gap-2)"}
+                sx={{
+                    flexDirection: isSmall ? "column" : "row",
+                    justifyItems: "space-between",
+                    justifyContent: "space-between",
+                    alignItems: isSmall ? "unset" : "center",
+                    alignContent: isSmall ? "unset" : "center",
+                }}
+            >
+                <Box component="div" sx={{ justifySelf: "flex-start" }}>
                     <SemesterSelectionComponent />
+                </Box>
+                <Box sx={{ justifySelf: "flex-end" }}>
+                    <Box ref={exportButtonPortalRef} component="div" sx={{ display: "grid" }}></Box>
                 </Box>
             </Stack>
             {semester ?
                 <ResultWrapperComponent semesterId={semester.id}>
-                    {(cleanResults) => <ResultsTableComponent results={cleanResults} />}
+                    {(cleanResults) =>
+                        <>
+                            <ResultsTableComponent results={cleanResults} />
+                            {createPortal(
+                                <Dropdown>
+                                    <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
+                                    <Menu component="div">
+                                        <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.csv)}>
+                                            Als .csv exportieren
+                                        </MenuItem>
+                                        <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.xls)}>
+                                            Als .xls exportieren
+                                        </MenuItem>
+                                    </Menu>
+                                </Dropdown>,
+                                exportButtonPortalRef.current as Element
+                            )}
+                        </>
+                    }
                 </ResultWrapperComponent> :
                 <Alert color="warning">Wählen Sie erst ein Semester aus </Alert>
             }
