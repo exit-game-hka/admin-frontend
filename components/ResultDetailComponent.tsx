@@ -86,7 +86,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                         <Stack>
                             <Typography level={"title-md"}>Veranstaltung</Typography>
                             <Typography>
-                                {`${veranstaltung.name} - ${veranstaltung.bezeichnung}`}
+                                {`${veranstaltung.bezeichnung} - ${veranstaltung.name}`}
                             </Typography>
                         </Stack>
                     </Stack>
@@ -216,6 +216,9 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                     borderRadius: "var(--gap-1)"
                                 }}
                             >
+                                <Typography level={"body-sm"} sx={{ alignSelf: "flex-end", textAlign: "right", mb: 1 }}>
+                                    {k.creationTimestamp.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute:"2-digit"})}
+                                </Typography>
                                 <Typography>{k.inhalt}</Typography>
                             </Sheet>
                         )}

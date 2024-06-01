@@ -1,6 +1,6 @@
 import React, {PropsWithChildren} from 'react';
 import ThemeRegistry from "@/app/themeRegistry";
-import {LayoutComponent} from "@/components/LayoutComponent";
+import LayoutComponent from "@/components/LayoutComponent";
 import {ApplicationContextProvider} from "@/contexts/ApplicationContext";
 
 type Props = PropsWithChildren;

@@ -225,22 +225,22 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
 
     const getKommentarById = async (id: string): Promise<Kommentar> => {
         const response = await getKommentarByIdApi(id);
-        return response.data;
+        return convertToKommentarModel(response.data);
     };
 
     const getKommentareBySemesterId = async (semesterId: string): Promise<Kommentar[]> => {
         const response = await getKommentareBySemesterIdApi(semesterId);
-        return response.data;
+        return response.data.map((k) => convertToKommentarModel(k));
     };
 
     const getKommentareBySpielerId = async (spielerId: string): Promise<Kommentar[]> => {
         const response = await getKommentareBySpielerIdApi(spielerId);
-        return response.data;
+        return response.data.map((k) => convertToKommentarModel(k));
     };
 
     const getKommentareBySpielerIdAndSemesterId = async (spielerId: string, semesterId: string): Promise<Kommentar[]> => {
         const response = await getKommentareBySpielerIdAndSemesterIdApi(spielerId, semesterId);
-        return response.data;
+        return response.data.map((k) => convertToKommentarModel(k));
     };
 
     return (
@@ -327,6 +327,13 @@ const convertToSemesterModel = (semester: Semester): Semester => {
         ...semester,
         start: new Date(semester.start),
         ende: new Date(semester.ende),
+    };
+}
+
+const convertToKommentarModel = (kommentar: Kommentar): Kommentar => {
+    return {
+        ...kommentar,
+        creationTimestamp: new Date(kommentar.creationTimestamp),
     };
 }
 // ----------------------------------------------------------------

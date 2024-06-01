@@ -1,5 +1,5 @@
 "use client";
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Alert, Box, Menu, MenuItem, Stack} from "@mui/joy";
 import {SemesterSelectionComponent} from "@/components/shared/SemesterSelectionComponent";
 import useApplicationContext from "@/hooks/useApplicationContext";
@@ -50,21 +50,30 @@ export const ResultComponent: React.FC = () => {
                 <ResultWrapperComponent semesterId={semester.id}>
                     {(cleanResults) =>
                         <>
-                            <ResultsTableComponent results={cleanResults} />
-                            {createPortal(
-                                <Dropdown>
-                                    <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
-                                    <Menu component="div">
-                                        <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.csv)}>
-                                            Als .csv exportieren
-                                        </MenuItem>
-                                        <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.xls)}>
-                                            Als .xls exportieren
-                                        </MenuItem>
-                                    </Menu>
-                                </Dropdown>,
-                                exportButtonPortalRef.current as Element
-                            )}
+                            {cleanResults.length === 0 ?
+                                <Alert>
+                                    Keine Ergebnisse für dieses Semester gefunden.
+                                    Es wurde in diesem Semester noch nicht gespielt.
+                                </Alert>
+                                :
+                                <>
+                                    <ResultsTableComponent results={cleanResults} />
+                                    {createPortal(
+                                        <Dropdown>
+                                            <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
+                                            <Menu component="div">
+                                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.csv)}>
+                                                    Als .csv exportieren
+                                                </MenuItem>
+                                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.xls)}>
+                                                    Als .xls exportieren
+                                                </MenuItem>
+                                            </Menu>
+                                        </Dropdown>,
+                                        exportButtonPortalRef.current as Element
+                                    )}
+                                </>
+                            }
                         </>
                     }
                 </ResultWrapperComponent> :
@@ -82,7 +91,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
     const { semesterId, children } = props;
     const {
         getErgebnisBySemesterId,
-        getInteraktionBySpielerIdAndAufgabeId,
+        getInteraktionBySpielerId,
         getSpielerListBySemesterId,
         getKommentareBySemesterId,
         getStatusBySemesterId,
@@ -98,48 +107,60 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         error: errorErgebnis,
     } = useSWR<Ergebnis[]>(`getErgebnisBySemesterId-${semesterId}`, async () => await getErgebnisBySemesterId(semesterId));
 
-    const loadInteractions = useCallback(async () => {
-        if (!ergebnisList) return;
-        // TODO: Replace this with a new API -> getInteraktionBySemesterId (Add this new API on the Backend)
-        const loadedInteractions = await Promise.all(
-            ergebnisList.map((e) => getInteraktionBySpielerIdAndAufgabeId(e.spielerId, e.aufgabeId))
-        );
-        const flatListOfLoadedInteractions = loadedInteractions.flat();
-        setInteractionList(flatListOfLoadedInteractions);
-    }, [ergebnisList, getInteraktionBySpielerIdAndAufgabeId]);
+    useEffect(() => {
+        const loadInteractions = async () => {
+            if (!ergebnisList) return;
+            // TODO: Replace this with a new API -> getInteraktionBySemesterId (Add this new API on the Backend)
+            const loadedInteractions = await Promise.all(
+                ergebnisList
+                    .map((e) => e.spielerId)
+                    // Removing duplicate spieler IDs
+                    .reduce((acc: string[], curr: string) => acc.find((s) => s === curr) ? acc : [...acc, curr],[])
+                    .map((id) => getInteraktionBySpielerId(id))
+            );
+            const flatListOfLoadedInteractions = loadedInteractions.flat();
+            setInteractionList(flatListOfLoadedInteractions);
+        }
 
-    const loadSpieler = useCallback(async () => {
-        const loadedSpieler = await getSpielerListBySemesterId(semesterId);
-        setSpielerList(loadedSpieler);
-    }, [getSpielerListBySemesterId, semesterId]);
-
-    const loadKommentare = useCallback(async () => {
-        const loadedKommentare = await getKommentareBySemesterId(semesterId);
-        setKommentarList(loadedKommentare);
-    }, [getKommentareBySemesterId, semesterId]);
-
-    const loadStatus = useCallback(async () => {
-        const loadedStatus = await getStatusBySemesterId(semesterId);
-        setStatusList(loadedStatus);
-    }, [getStatusBySemesterId, semesterId]);
+        loadInteractions();
+    }, [ergebnisList]);
 
     useEffect(() => {
-        loadInteractions();
+        if (!semesterId) return;
+
+        const loadSpieler = async () => {
+            const loadedSpieler = await getSpielerListBySemesterId(semesterId);
+            setSpielerList(loadedSpieler);
+        }
+
+        const loadKommentare = async () => {
+            const loadedKommentare = await getKommentareBySemesterId(semesterId);
+            setKommentarList(loadedKommentare);
+        }
+
+        const loadStatus = async () => {
+            const loadedStatus = await getStatusBySemesterId(semesterId);
+            setStatusList(loadedStatus);
+        }
+
         loadSpieler();
         loadKommentare();
         loadStatus();
-    }, [ergebnisList, loadInteractions, loadSpieler, loadKommentare, loadStatus]);
+    }, [semesterId]);
 
-    const resolveNumberOfInteractionOfPlayerInRoom = useCallback((playerId: string, aufgabeId: string): string => {
+    const resolveNumberOfInteractionOfPlayerInRoom = (playerId: string, aufgabeId: string): string => {
         if (!interactionList) return "";
         const interactionsOfPlayer = interactionList.filter((i) => i.spielerId === playerId && i.aufgabeId === aufgabeId);
 
         if (interactionsOfPlayer.length === 0) return "";
 
-        return interactionsOfPlayer.length.toString();
-    }, [interactionList]);
+        const test = interactionList.filter((i) => i.spielerId === "10000000-0000-0000-0000-000000000005" && i.aufgabeId === "30000000-0000-0000-0000-000000000002")
+        console.table(test);
 
-    const resolveTimeSpentInRoomOfPlayer = useCallback((playerId: string, aufgabeId: string): string => {
+        return interactionsOfPlayer.length.toString();
+    }
+
+    const resolveTimeSpentInRoomOfPlayer = (playerId: string, aufgabeId: string): string => {
         if (!ergebnisList) return "";
         const resultOfPlayer = ergebnisList.filter((e) => e.spielerId === playerId && e.aufgabeId === aufgabeId);
 
@@ -151,9 +172,9 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             .reduce((acc, curr) => acc + curr, 0);
 
         return `${playTime.toFixed(0)} ${TIME_UNIT}`;
-    }, [ergebnisList]);
+    }
 
-    const resolveTotalPlayTimeOfPlayer = useCallback((playerId: string): string => {
+    const resolveTotalPlayTimeOfPlayer = (playerId: string): string => {
         if (!ergebnisList) return "";
         const resultsOfPlayer = ergebnisList.filter((e) => e.spielerId === playerId);
 
@@ -165,36 +186,36 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             .reduce((acc, curr) => acc + curr, 0);
 
         return `${playTimeFromResult.toFixed(0)} ${TIME_UNIT}`;
-    }, [ergebnisList]);
+    }
 
-    const resolveTriesPerTaskOfPlayer = useCallback((playerId: string, aufgabeId: string): string => {
+    const resolveTriesPerTaskOfPlayer = (playerId: string, aufgabeId: string): string => {
         if (!ergebnisList) return "";
         const resultsOfPlayer = ergebnisList.filter((e) => e.spielerId === playerId && e.aufgabeId === aufgabeId);
 
         if (resultsOfPlayer.length === 0) return "";
 
         return resultsOfPlayer.length.toString();
-    }, [ergebnisList]);
+    }
 
-    const resolveKommentareOfPlayer = useCallback((playerId: string): string[] => {
+    const resolveKommentareOfPlayer = (playerId: string): string[] => {
         if (!kommentarList) return [];
         const kommentareOfPlayer = kommentarList.filter((k) => k.spielerId === playerId);
 
         if (kommentareOfPlayer.length === 0) return [];
 
         return kommentareOfPlayer.map((k) => k.inhalt);
-    }, [kommentarList]);
+    }
 
-    const resolveStatusOfPlayer = useCallback((playerId: string): string => {
+    const resolveStatusOfPlayer = (playerId: string): string => {
         if (!statusList) return "";
         const statusOfPlayer = statusList.find((s) => s.spielerId === playerId);
 
         if (!statusOfPlayer) return "";
 
         return statusOfPlayer.istSpielBeendet ? "Beendet" : "Nicht Beendet";
-    }, [statusList]);
+    }
 
-    const computeCleanResults = useCallback((spielerList: Spieler[]): CleanResult[] => {
+    const computeCleanResults = (spielerList: Spieler[]): CleanResult[] => {
         return spielerList.map((s) => ({
             spielerId: s.spielerId,
             idOfPlayer: s.id,
@@ -226,7 +247,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             hasFinishedGame: resolveStatusOfPlayer(s.id),
             comments: resolveKommentareOfPlayer(s.id),
         }));
-    }, [resolveNumberOfInteractionOfPlayerInRoom, resolveTimeSpentInRoomOfPlayer, resolveTotalPlayTimeOfPlayer, resolveTriesPerTaskOfPlayer]);
+    }
 
     if (isLoadingErgebnis || !ergebnisList || !interactionList || !spielerList) return <Alert>Wird geladen...</Alert>
 

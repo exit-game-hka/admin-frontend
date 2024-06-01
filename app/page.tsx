@@ -3,8 +3,8 @@ import {PageWrapperComponent} from "@/components/shared/PageWrapperComponent";
 import {SemesterSelectionComponent} from "@/components/shared/SemesterSelectionComponent";
 import {StatusListComponent} from "@/components/shared/StatusListComponent";
 import {Box, Button, Card, Stack, Typography} from "@mui/joy";
-import PlayerListComponent from "@/components/PlayerListComponent";
-import Link from "next/link";
+//import PlayerListComponent from "@/components/PlayerListComponent";
+//import Link from "next/link";
 
 const Home: React.FC = () => {
     return (
@@ -24,21 +24,21 @@ const Home: React.FC = () => {
                         },
                     }}
                 >
-                    <Card>
-                        <Stack direction="row" alignItems="center" alignContent="center">
-                            <Typography level="title-lg" sx={{ flexGrow: 1 }}>Spieler</Typography>
-                            <Link href={"/players"}>
-                                <Button variant="plain">Alle Spieler</Button>
-                            </Link>
-                        </Stack>
-                        <PlayerListComponent
-                            limit={3}
-                            tableProps={{
-                                variant: "plain",
-                            }}
-                        />
-                    </Card>
-                    <div></div>
+                    {/*<Card>*/}
+                    {/*    <Stack direction="row" alignItems="center" alignContent="center">*/}
+                    {/*        <Typography level="title-lg" sx={{ flexGrow: 1 }}>Spieler</Typography>*/}
+                    {/*        <Link href={"/players"}>*/}
+                    {/*            <Button variant="plain">Alle Spieler</Button>*/}
+                    {/*        </Link>*/}
+                    {/*    </Stack>*/}
+                    {/*    <PlayerListComponent*/}
+                    {/*        limit={3}*/}
+                    {/*        tableProps={{*/}
+                    {/*            variant: "plain",*/}
+                    {/*        }}*/}
+                    {/*    />*/}
+                    {/*</Card>*/}
+                    {/*<div></div>*/}
                 </Box>
             </Stack>
         </PageWrapperComponent>

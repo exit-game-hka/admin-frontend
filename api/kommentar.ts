@@ -6,6 +6,7 @@ export type Kommentar = {
     spielerId: string;
     semesterId: string;
     inhalt: string;
+    creationTimestamp: Date;
 };
 
 export type KommentarDto = Omit<Kommentar, "id">;

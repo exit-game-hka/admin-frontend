@@ -44,7 +44,7 @@ type Props = {
 /**
  * React-Komponente für die Seitenleiste der Anwendung.
  */
-export const SidebarComponent: React.FC<Props> = (props) => {
+const SidebarComponent: React.FC<Props> = (props) => {
     const { isMobile, onButtonClick } = props;
     const [isOpen, setIsOpen] = useState<boolean>(INITIAL_SIDEBAR_STATE);
     const router = useRouter();
@@ -231,3 +231,5 @@ const StyledListItemButton = styled(ListItemButton)`
     border-radius: var(--border-small);
     padding: var(--gap-1);
 `;
+
+export default SidebarComponent;
