@@ -6,6 +6,7 @@ import {Avatar, Box, Divider, IconButton, Sheet, Stack, Typography, useColorSche
 import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import {SidebarOnMobileComponent} from "@/components/SidebarComponent";
+import AuthStatusComponent from "@/components/AuthStatusComponent";
 
 /**
  * React-Komponente für die App Bar der Anwendung.
@@ -33,7 +34,7 @@ const AppBarComponent: React.FC = () => {
                     <IconButton onClick={switchMode}>
                         {mode === "light" ? <NightsStayOutlinedIcon /> : <WbSunnyOutlinedIcon />}
                     </IconButton>
-                    <Avatar variant="outlined">MG</Avatar>
+                    <AuthStatusComponent />
                 </NavigationBarOptionsContainer>
             </NavigationBarContainer>
             <Divider orientation={"horizontal"} />

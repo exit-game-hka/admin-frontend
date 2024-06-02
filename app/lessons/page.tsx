@@ -3,8 +3,11 @@ import {PageWrapperComponent} from "@/components/shared/PageWrapperComponent";
 import Link from "next/link";
 import {Button} from "@mui/joy";
 import {VeranstaltungListComponent} from "@/components/VeranstaltungListComponent";
+import {protectRoute} from "@/utils/protectRoute";
 
-const EventPage: React.FC = () => {
+const LessonsPage: React.FC = async () => {
+    await protectRoute();
+
     const rightContent = (
         <Link href={"/lessons/add"} style={{ display: "grid" }}>
             <Button>Neue Veranstaltung</Button>
@@ -18,5 +21,5 @@ const EventPage: React.FC = () => {
     );
 };
 
-export default EventPage;
+export default LessonsPage;
 

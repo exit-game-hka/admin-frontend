@@ -17,8 +17,20 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import Dropdown from '@mui/joy/Dropdown';
 import MenuButton from '@mui/joy/MenuButton';
+import {useSession} from "next-auth/react";
 
 export const ResultComponent: React.FC = () => {
+    const session = useSession();
+
+    useEffect(() => {
+        console.log("Session: ", session);
+        console.log("Env vars: ", {
+            clientId: `${process.env.NEXT_PUBLIC_DEMO_FRONTEND_CLIENT_ID}`,
+            clientSecret: `${process.env.NEXT_PUBLIC_DEMO_FRONTEND_CLIENT_SECRET}`,
+            issuer: `${process.env.NEXT_PUBLIC_AUTH_ISSUER}`,
+        });
+    }, []);
+
     const { semester } = useApplicationContext();
     const { isSmall } = useMediaQuery();
     const exportButtonPortalRef = useRef<HTMLDivElement>();

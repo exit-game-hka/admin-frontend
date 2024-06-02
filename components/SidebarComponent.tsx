@@ -91,12 +91,12 @@ const SidebarComponent: React.FC<Props> = (props) => {
             isActive: pathname.includes("/players"),
             onClick: () => handleClick("/players"),
         },
-        {
-            label: "Räume",
-            icon: <MeetingRoomOutlinedIcon />,
-            isActive: pathname.includes("/rooms"),
-            onClick: () => handleClick("/rooms"),
-        },
+        // {
+        //     label: "Räume",
+        //     icon: <MeetingRoomOutlinedIcon />,
+        //     isActive: pathname.includes("/rooms"),
+        //     onClick: () => handleClick("/rooms"),
+        // },
         {
             label: "Ergebnisse",
             icon: <AssessmentOutlinedIcon />,
