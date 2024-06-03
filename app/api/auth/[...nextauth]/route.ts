@@ -27,7 +27,7 @@ const refreshAccessToken = async (token: any) => {
     };
 }
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
     providers: [
         KeycloakProvider({
             clientId: `${process.env.NEXT_PUBLIC_DEMO_FRONTEND_CLIENT_ID}`,
