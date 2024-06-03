@@ -6,7 +6,7 @@ import {protectRoute} from "@/utils/protectRoute";
 const NewVeranstaltungPage: React.FC = async () => {
     await protectRoute();
     return (
-        <PageWrapperComponent title={"Neue Veranstaltung"}>
+        <PageWrapperComponent title={"Neues Fachgebiet"}>
             <NewVeranstaltungFormComponent />
         </PageWrapperComponent>
     );

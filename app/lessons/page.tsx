@@ -10,12 +10,12 @@ const LessonsPage: React.FC = async () => {
 
     const rightContent = (
         <Link href={"/lessons/add"} style={{ display: "grid" }}>
-            <Button>Neue Veranstaltung</Button>
+            <Button>Neues Fachgebiet</Button>
         </Link>
     );
 
     return (
-        <PageWrapperComponent title={"Veranstaltungen"} rightContent={rightContent}>
+        <PageWrapperComponent title={"Fachgebiete"} rightContent={rightContent}>
             <VeranstaltungListComponent />
         </PageWrapperComponent>
     );
