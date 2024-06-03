@@ -4,12 +4,13 @@ import {Alert, Box, Card, Chip, Sheet, Stack, Typography} from "@mui/joy";
 import styled from "styled-components";
 import {usePlayerResult} from "@/hooks/usePlayerResult";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
-import {AufgabeId, TIME_UNIT} from "@/contexts/ApplicationContext";
+import {AufgabeId, convertToTimeUnit, getTimeUnitShorthand} from "@/contexts/ApplicationContext";
 import {Interaktion} from "@/api/interaktion";
 import AccessAlarmsOutlinedIcon from '@mui/icons-material/AccessAlarmsOutlined';
 import SwipeVerticalOutlinedIcon from '@mui/icons-material/SwipeVerticalOutlined';
 import {Ergebnis} from "@/api/ergebnis";
 import FunctionsOutlinedIcon from '@mui/icons-material/FunctionsOutlined';
+import useApplicationContext from "@/hooks/useApplicationContext";
 
 type Props = {
     playerId: string;
@@ -29,6 +30,10 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
         isLoading,
         error,
     } = usePlayerResult(playerId);
+    const {
+        timeUnit,
+        numberDecimalPlace,
+    } = useApplicationContext();
 
     const resolveTaskNumber = (aufgabeId: string): string => {
         switch (aufgabeId) {
@@ -142,9 +147,13 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                             <Alert>
                                 <FunctionsOutlinedIcon />
                                 <span>Summe: </span>
-                                {`${ergebnisList
-                                    .reduce((acc: number, curr: Ergebnis) => acc + (curr.geloestIn ?? 0), 0)
-                                    ?.toFixed(0)} ${TIME_UNIT}`
+                                {`${
+                                    convertToTimeUnit(ergebnisList
+                                            .reduce((acc: number, curr: Ergebnis) => acc + (curr.geloestIn ?? 0), 0) as number,
+                                        timeUnit
+                                    )?.toFixed(numberDecimalPlace)}
+                                    
+                                    ${getTimeUnitShorthand(timeUnit)}`
                                 }
                             </Alert>
                             <CustomTableComponent
@@ -163,7 +172,9 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                             </Box>
                                             <Box component="td">{resolveTaskNumber(g[0])}</Box>
                                             <Box component="td">
-                                                {(g[1]?.reduce((a, b) => a + (b.geloestIn ?? 0), 0) ?? 0)?.toFixed(0)} {TIME_UNIT}
+                                                {convertToTimeUnit((g[1]?.reduce((a, b) => a + (b.geloestIn ?? 0), 0) ?? 0), timeUnit)
+                                                    .toFixed(numberDecimalPlace)
+                                                } {getTimeUnitShorthand(timeUnit)}
                                             </Box>
                                         </React.Fragment>
                                     )

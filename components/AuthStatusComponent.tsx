@@ -1,40 +1,16 @@
 "use client";
-import {signOut, useSession} from "next-auth/react";
-import React, {useEffect} from "react";
-import axios from "axios";
+import React from "react";
 import {Avatar, Stack, Typography} from "@mui/joy";
 import {Session} from "next-auth";
 import Menu from '@mui/joy/Menu';
 import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
 import Dropdown from '@mui/joy/Dropdown';
-
-const keycloakSessionLogOut = async () => {
-    try {
-        await axios.get(`${process.env.NEXTAUTH_URL}/api/auth/logout`);
-    } catch (err) {
-        console.error(err);
-    }
-};
+import {useAuth} from "@/hooks/useAuth";
 
 const AuthStatusComponent: React.FC = () => {
-    const { data: session, status } = useSession();
-
-    useEffect(() => {
-        if (
-            status != "loading" &&
-            session &&
-            // @ts-ignore
-            session?.error === "RefreshAccessTokenError"
-        ) {
-            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH! });
-        }
-    }, [session, status]);
-
-    const handleLogout = async () => {
-        await keycloakSessionLogOut();
-        await signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH! });
-    };
+    const { signOut, ...sessionData } = useAuth();
+    const { data: session, status } = sessionData;
 
     const resolveUserAcronymFromSession = (session: Session): string => {
         if (!session.user?.name) return "";
@@ -56,7 +32,7 @@ const AuthStatusComponent: React.FC = () => {
                     >
                         {resolveUserAcronymFromSession(session)}
                     </MenuButton>
-                    <Menu sx={{
+                    <Menu component="div" sx={{
                         px: 1,
                         py: 2,
                         "& :nth-child(n)": {
@@ -76,7 +52,7 @@ const AuthStatusComponent: React.FC = () => {
                                 </Stack>
                             </Stack>
                         </MenuItem>
-                        <MenuItem color="danger" onClick={handleLogout}>Abmelden</MenuItem>
+                        <MenuItem color="danger" onClick={signOut}>Abmelden</MenuItem>
                     </Menu>
                 </Dropdown>
             </>

@@ -2,7 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
-import {Avatar, Box, Divider, IconButton, Sheet, Stack, Typography, useColorScheme} from "@mui/joy";
+import {Box, Divider, IconButton, Sheet, Stack, Typography, useColorScheme} from "@mui/joy";
 import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import {SidebarOnMobileComponent} from "@/components/SidebarComponent";

@@ -11,15 +11,22 @@ import AppsOutlinedIcon from '@mui/icons-material/AppsOutlined';
 import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
-import {Typography, useColorScheme} from "@mui/joy";
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import {Button, Typography, useColorScheme} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import Autocomplete from '@mui/joy/Autocomplete';
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
+import {useAuth} from "@/hooks/useAuth";
+import useApplicationContext from "@/hooks/useApplicationContext";
+import {NumberDecimalPlace, TimeUnit} from "@/contexts/ApplicationContext";
 
 type GroupName = "Benutzer-Infos" | "Darstellung" | "Anzeige" | "Über die Anwendung";
 const SettingOptionsComponent: React.FC = () => {
     const {isSmall} = useMediaQuery();
     const { mode, setMode } = useColorScheme();
+    const appContext = useApplicationContext();
+    const { signOut, data: session } = useAuth();
 
     const modeOptions = [
         {label: "Dunkel", value: "dark"},
@@ -39,12 +46,29 @@ const SettingOptionsComponent: React.FC = () => {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                     } : {})
-                }}>admin@acme.com</Typography>,
+                }}>{session?.user?.name}</Typography>,
+            },
+            {
+                icon: <AlternateEmailOutlinedIcon fontSize="small" />,
+                label: "Email-Adresse",
+                value: <Typography sx={{
+                    ...(isSmall ? {
+                        width: "100px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                    } : {})
+                }}>{session?.user?.email}</Typography>,
             },
             {
                 icon: <AdminPanelSettingsOutlinedIcon fontSize="small" />,
                 label: "Role",
                 value: "Admin",
+            },
+            {
+                icon: <ManageAccountsOutlinedIcon fontSize="small" />,
+                label: "Session",
+                value: <Button size="sm" color="danger" onClick={signOut}>Abmelden</Button>,
             },
         ],
         detail: "Nur Benutzer mit der Role Admin können schreiben(Daten anlegen). Es kann keine Spieler, Semester, usw... angelegt werden, wenn die Role Admin nicht besteht.",
@@ -58,8 +82,10 @@ const SettingOptionsComponent: React.FC = () => {
                 label: "Modus",
                 value: (
                     <Autocomplete
+                        size="sm"
                         value={mode === "dark" ? modeOptions[0] : modeOptions[1]}
                         options={modeOptions}
+                        disableClearable={true}
                         getOptionLabel={(o) => o.label}
                         onChange={(_, newValue) => setMode(newValue?.value as Mode)}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
@@ -69,12 +95,31 @@ const SettingOptionsComponent: React.FC = () => {
             {
                 icon: <WatchLaterOutlinedIcon fontSize="small" />,
                 label: "Zeiteinheit",
-                value: "Minuten",
+                value: (
+                    <Autocomplete
+                        size="sm"
+                        value={appContext.timeUnit}
+                        disableClearable={true}
+                        options={["Minuten", "Stunden"]}
+                        onChange={(_, newValue) => appContext.setTimeUnit(newValue as TimeUnit)}
+                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                    />
+                ),
             },
             {
                 icon: <NumbersOutlinedIcon fontSize="small" />,
                 label: "Nachkommastellen",
-                value: "keine",
+                value: (
+                    <Autocomplete
+                        size="sm"
+                        value={appContext.numberDecimalPlace}
+                        options={[0, 1, 2]}
+                        disableClearable={true}
+                        //getOptionLabel={(o) => o.label}
+                        onChange={(_, newValue) => appContext.setNumberDecimalPlace(newValue as NumberDecimalPlace)}
+                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                    />
+                ),
             },
         ],
     };
@@ -85,12 +130,22 @@ const SettingOptionsComponent: React.FC = () => {
             {
                 icon: <LanguageOutlinedIcon fontSize="small" />,
                 label: "Sprache",
-                value: "Deutsch",
+                value: (
+                    <Autocomplete
+                        size="sm"
+                        value={"Deutsch"}
+                        options={["Deutsch"]}
+                        disableClearable={true}
+                        //getOptionLabel={(o) => o.label}
+                        //onChange={(_, newValue) => setMode(newValue?.value as Mode)}
+                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                    />
+                ),
             },
             {
                 icon: <TravelExploreOutlinedIcon fontSize="small" />,
                 label: "Zeitzone",
-                value: "Europe/Berlin",
+                value: Intl.DateTimeFormat().resolvedOptions().timeZone,
             },
         ],
     };
@@ -100,7 +155,7 @@ const SettingOptionsComponent: React.FC = () => {
         items: [
             {
                 icon: <AppsOutlinedIcon fontSize="small" />,
-                label: "Bezeichung",
+                label: "Bezeichnung",
                 value: <Typography sx={{
                     ...(isSmall ? {
                         width: "120px",
@@ -113,12 +168,12 @@ const SettingOptionsComponent: React.FC = () => {
             {
                 icon: <HandymanOutlinedIcon fontSize="small" />,
                 label: "Build",
-                value: "#27",
+                value: process.env.NEXT_PUBLIC_BUILD_NUMBER ?? "",
             },
             {
                 icon: <NewReleasesOutlinedIcon fontSize="small" />,
                 label: "Version",
-                value: "1.0.0",
+                value: process.env.NEXT_PUBLIC_APP_VERSION ?? "",
             },
         ],
     };

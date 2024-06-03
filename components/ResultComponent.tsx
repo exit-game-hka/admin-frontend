@@ -7,7 +7,7 @@ import useSWR from "swr";
 import {Ergebnis} from "@/api/ergebnis";
 import {Interaktion} from "@/api/interaktion";
 import {Spieler} from "@/api/spieler";
-import {AufgabeId, CleanResult, exportResult, TIME_UNIT} from "@/contexts/ApplicationContext";
+import {AufgabeId, CleanResult, convertToTimeUnit, exportResult, getTimeUnitShorthand} from "@/contexts/ApplicationContext";
 import {ResultsTableComponent} from "@/components/ResultsTableComponent";
 import {Kommentar} from "@/api/kommentar";
 import {Status} from "@/api/status";
@@ -20,17 +20,6 @@ import MenuButton from '@mui/joy/MenuButton';
 import {useSession} from "next-auth/react";
 
 export const ResultComponent: React.FC = () => {
-    const session = useSession();
-
-    useEffect(() => {
-        console.log("Session: ", session);
-        console.log("Env vars: ", {
-            clientId: `${process.env.NEXT_PUBLIC_DEMO_FRONTEND_CLIENT_ID}`,
-            clientSecret: `${process.env.NEXT_PUBLIC_DEMO_FRONTEND_CLIENT_SECRET}`,
-            issuer: `${process.env.NEXT_PUBLIC_AUTH_ISSUER}`,
-        });
-    }, []);
-
     const { semester } = useApplicationContext();
     const { isSmall } = useMediaQuery();
     const exportButtonPortalRef = useRef<HTMLDivElement>();
@@ -102,6 +91,8 @@ type PropsResultWrapper = {
 const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
     const { semesterId, children } = props;
     const {
+        timeUnit,
+        numberDecimalPlace,
         getErgebnisBySemesterId,
         getInteraktionBySpielerId,
         getSpielerListBySemesterId,
@@ -165,10 +156,6 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         const interactionsOfPlayer = interactionList.filter((i) => i.spielerId === playerId && i.aufgabeId === aufgabeId);
 
         if (interactionsOfPlayer.length === 0) return "";
-
-        const test = interactionList.filter((i) => i.spielerId === "10000000-0000-0000-0000-000000000005" && i.aufgabeId === "30000000-0000-0000-0000-000000000002")
-        console.table(test);
-
         return interactionsOfPlayer.length.toString();
     }
 
@@ -183,7 +170,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             .map((e) => e.geloestIn as number)
             .reduce((acc, curr) => acc + curr, 0);
 
-        return `${playTime.toFixed(0)} ${TIME_UNIT}`;
+        return `${convertToTimeUnit(playTime, timeUnit).toFixed(numberDecimalPlace)} ${getTimeUnitShorthand(timeUnit)}`;
     }
 
     const resolveTotalPlayTimeOfPlayer = (playerId: string): string => {
@@ -197,7 +184,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             .map((e) => e.geloestIn as number)
             .reduce((acc, curr) => acc + curr, 0);
 
-        return `${playTimeFromResult.toFixed(0)} ${TIME_UNIT}`;
+        return `${convertToTimeUnit(playTimeFromResult, timeUnit).toFixed(numberDecimalPlace)} ${getTimeUnitShorthand(timeUnit)}`;
     }
 
     const resolveTriesPerTaskOfPlayer = (playerId: string, aufgabeId: string): string => {

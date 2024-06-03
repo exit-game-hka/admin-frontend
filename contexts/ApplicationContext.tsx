@@ -1,5 +1,5 @@
 "use client";
-import React, {createContext, PropsWithChildren, useState} from "react";
+import React, {createContext, PropsWithChildren, useEffect, useState} from "react";
 import {
     createInteraktionApi,
     getInteraktionBySpielerIdAndAufgabeIdApi,
@@ -89,7 +89,11 @@ type ContextOutput = {
     getKommentareBySemesterId: (semesterId: string) => Promise<Kommentar[]>;
     getKommentareBySpielerId: (spielerId: string) => Promise<Kommentar[]>;
     getKommentareBySpielerIdAndSemesterId: (spielerId: string, semesterId: string) => Promise<Kommentar[]>;
-
+    // Time unit
+    timeUnit: TimeUnit;
+    setTimeUnit: (timeUnit: TimeUnit) => void;
+    numberDecimalPlace: NumberDecimalPlace;
+    setNumberDecimalPlace: (numberDecimalPlace: NumberDecimalPlace) => void;
 }
 
 // @ts-ignore
@@ -101,6 +105,35 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     const { children } = props;
 
     const [semester, setSemester] = useState<Semester | undefined>(undefined);
+    const [timeUnit, setTimeUnit] = useState<TimeUnit>("Minuten");
+    const [numberDecimalPlace, setNumberDecimalPlace] = useState<NumberDecimalPlace>(0);
+
+    useEffect(() => {
+        const getTimeUnitFromLocalStorage = () => {
+            const timeUnitFromLocalStorage = localStorage.getItem("time-unit");
+            if (!timeUnitFromLocalStorage || timeUnitFromLocalStorage !== "Minuten" && timeUnitFromLocalStorage !== "Stunden") return;
+            setTimeUnit(timeUnitFromLocalStorage);
+        }
+
+        const getNumberDecimalPlaceFromLocalStorage = () => {
+            const numberDecimalPlaceFromLocalStorage = localStorage.getItem("number-decimal-place");
+            if (!numberDecimalPlaceFromLocalStorage || numberDecimalPlaceFromLocalStorage!== "0" && numberDecimalPlaceFromLocalStorage!== "1" && numberDecimalPlaceFromLocalStorage!== "2") return;
+            setNumberDecimalPlace(parseInt(numberDecimalPlaceFromLocalStorage) as NumberDecimalPlace);
+        }
+
+        getTimeUnitFromLocalStorage();
+        getNumberDecimalPlaceFromLocalStorage();
+    }, []);
+
+    const setTimeUnitHandler = (timeUnit: TimeUnit) => {
+        localStorage.setItem("time-unit", timeUnit);
+        setTimeUnit(timeUnit);
+    }
+
+    const setNumberDecimalPlaceHandler = (numberDecimalPlace: NumberDecimalPlace) => {
+        localStorage.setItem("number-decimal-place", numberDecimalPlace.toString());
+        setNumberDecimalPlace(numberDecimalPlace);
+    }
 
     const getInteraktionBySpielerIdAndAufgabeId = async (spielerId: string, aufgabeId: string): Promise<Interaktion[]> => {
         const response = await getInteraktionBySpielerIdAndAufgabeIdApi(spielerId, aufgabeId);
@@ -277,6 +310,10 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getKommentareBySemesterId,
             getKommentareBySpielerId,
             getKommentareBySpielerIdAndSemesterId,
+            timeUnit,
+            setTimeUnit: setTimeUnitHandler,
+            numberDecimalPlace,
+            setNumberDecimalPlace: setNumberDecimalPlaceHandler,
         }}>
             {children}
         </ApplicationContext.Provider>
@@ -342,6 +379,10 @@ const convertToKommentarModel = (kommentar: Kommentar): Kommentar => {
 
 export const TIME_UNIT: string = "Min." as const;
 
+export type TimeUnit = "Minuten" | "Stunden";
+
+export type NumberDecimalPlace = 0 | 1 | 2;
+
 export enum AufgabeId {
     AUFGABE_1 = "30000000-0000-0000-0000-000000000001",
     AUFGABE_2 = "30000000-0000-0000-0000-000000000002",
@@ -370,3 +411,15 @@ export type CleanResult = {
     hasFinishedGame: string;
     comments: string[];
 };
+
+export const convertToTimeUnit = (timeInMinutes: number, timeUnit: TimeUnit): number => {
+    switch (timeUnit) {
+        case "Minuten": return timeInMinutes;
+        case "Stunden": return timeInMinutes / 60;
+        default: return timeInMinutes;
+    }
+}
+
+export const getTimeUnitShorthand = (timeUnit: TimeUnit): string => {
+    return timeUnit === "Minuten" ? "Min." : "Std.";
+}
