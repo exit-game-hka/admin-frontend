@@ -26,6 +26,7 @@ ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
 ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ENV NEXTAUTH_SECRET="IbcJYuGwT7V/BGyhijc/USevOJdArymV4umChLb4Kt4="
 ENV NEXTAUTH_URL="https://193.196.37.154/exit-game-admin-dashboard/api/auth"
+ENV NODE_OPTIONS="--dns-result-order=ipv4first"
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
