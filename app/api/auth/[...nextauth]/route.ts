@@ -36,7 +36,7 @@ const authOptions: AuthOptions = {
         }),
     ],
 
-    secret: "IbcJYuGwT7V/BGyhijc/USevOJdArymV4umChLb4Kt4=",
+    secret: process.env.NEXTAUTH_SECRET ?? "IbcJYuGwT7V/BGyhijc/USevOJdArymV4umChLb4Kt4=",
 
     callbacks: {
         // @ts-ignore
