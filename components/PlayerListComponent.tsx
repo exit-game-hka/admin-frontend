@@ -1,14 +1,15 @@
 "use client";
-import React from 'react';
+import React, {useState} from 'react';
 import {Alert, Box, TableProps} from "@mui/joy";
 import useSWR from "swr";
 import useApplicationContext from "@/hooks/useApplicationContext";
-import {Spieler} from "@/api/spieler";
+import {SpielerListPage} from "@/api/spieler";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import {Semester} from "@/api/semester";
 import {Veranstaltung} from "@/api/veranstaltung";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
+import {DEFAULT_INITIAL_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Pagination} from "@/contexts/ApplicationContext";
 
 type Props = {
     tableProps?: TableProps;
@@ -18,13 +19,20 @@ type Props = {
 const PlayerListComponent: React.FC<Props> = (props) => {
     const { tableProps, limit } = props;
     const { getAllSpieler, getAllSemester, getAllVeranstaltungen } = useApplicationContext();
+    const [pagination, setPagination] = useState<Pagination>({
+        pageNumber: DEFAULT_INITIAL_PAGE_NUMBER,
+        pageSize: DEFAULT_PAGE_SIZE,
+    });
     const { isSmall } = useMediaQuery();
 
     const {
-        data: spieler,
-        isLoading: isLoadingSpieler,
-        error: errorSpieler,
-    } = useSWR<Spieler[]>("getAllPlayer", async () => await getAllSpieler());
+        data: spielerListPage,
+        isLoading: isLoadingSpielerListPage,
+        error: errorSpielerListPage,
+    } = useSWR<SpielerListPage>(
+        `getAllPlayer-${pagination.pageSize}${pagination.pageNumber}`,
+        async () => await getAllSpieler(pagination.pageNumber, pagination.pageSize)
+    );
 
     const {
         data: semesters,
@@ -47,15 +55,15 @@ const PlayerListComponent: React.FC<Props> = (props) => {
     }
 
     if (
-        isLoadingSpieler ||
+        isLoadingSpielerListPage ||
         isLoadingSemesters ||
         isLoadingVeranstaltungen ||
-        !spieler ||
+        !spielerListPage ||
         !semesters ||
         !veranstaltungen
     ) return <div>Wird geladen...</div>
 
-    if (errorSpieler) return <Alert color="danger">{(errorSpieler as Error).message}</Alert>
+    if (errorSpielerListPage) return <Alert color="danger">{(errorSpielerListPage as Error).message}</Alert>
 
     if (errorSemesters) return <Alert color="danger">{(errorSemesters as Error).message}</Alert>
 
@@ -64,6 +72,16 @@ const PlayerListComponent: React.FC<Props> = (props) => {
     return (
         <CustomTableComponent
             {...tableProps}
+            paginationConfig={{
+                pageNumber: spielerListPage.pageNumber,
+                pageSize: spielerListPage.pageSize,
+                totalPages: spielerListPage.totalPages,
+                totalElements: spielerListPage.totalElements,
+                isFirst: spielerListPage.isFirst,
+                isLast: spielerListPage.isLast,
+                onChangePage: (pageNumber: number) => setPagination((prev) => ({...prev, pageNumber })),
+                onChangeRowsPerPage: (pageSize: number) => setPagination((prev) => ({...prev, pageSize })),
+            }}
             headerCells={
                 <Box component="tr">
                     <Box component="th" sx={{ width: "50px" }}></Box>
@@ -75,7 +93,7 @@ const PlayerListComponent: React.FC<Props> = (props) => {
                     }
                 </Box>
             }
-            bodyRows={spieler.slice(0, limit).map((spieler) => ({
+            bodyRows={spielerListPage.pageContent.slice(0, limit).map((spieler) => ({
                     content: (
                         <React.Fragment key={spieler.spielerId}>
                             <Box component="td" sx={{ width: "50px" }}>

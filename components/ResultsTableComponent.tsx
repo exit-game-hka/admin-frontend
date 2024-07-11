@@ -2,7 +2,7 @@ import React from "react";
 import {Alert, Badge, Box, Typography} from "@mui/joy";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
-import {CleanResult} from "@/contexts/ApplicationContext";
+import {CleanResult, PaginationConfig} from "@/contexts/ApplicationContext";
 import {useRouter} from "next/navigation";
 
 // @ts-ignore
@@ -11,9 +11,10 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 
 type Props = {
     results: CleanResult[];
+    paginationConfig: PaginationConfig;
 }
 export const ResultsTableComponent: React.FC<Props> = (props) => {
-    const { results } = props;
+    const { results, paginationConfig } = props;
     const router = useRouter();
     const { isSmall } = useMediaQuery();
 
@@ -24,6 +25,7 @@ export const ResultsTableComponent: React.FC<Props> = (props) => {
         <CustomTableComponent
             size="md"
             borderAxis="both"
+            paginationConfig={paginationConfig}
             headerCells={
                 <>
                     <Box component="tr">

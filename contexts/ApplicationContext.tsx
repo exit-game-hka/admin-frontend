@@ -23,7 +23,7 @@ import {
     getSpielerBySpielerIdApi,
     getSpielerListBySemesterIdApi,
     Spieler,
-    SpielerDto,
+    SpielerDto, SpielerListPage,
     updateSpielerApi
 } from "@/api/spieler";
 import {getStatusBySemesterIdApi, getStatusBySpielerIdApi, Status} from "@/api/status";
@@ -66,10 +66,10 @@ type ContextOutput = {
     // Spieler
     getSpielerById: (id: string) => Promise<Spieler>;
     getSpielerBySpielerId: (spielerId: string) => Promise<Spieler>;
-    getAllSpieler: () => Promise<Spieler[]>;
+    getAllSpieler: (pageNumber?: number, pageSize?: number) => Promise<SpielerListPage>;
     createSpieler: (spielerDto: SpielerDto) => Promise<void>;
     updateSpieler: (spieler: Spieler) => Promise<void>;
-    getSpielerListBySemesterId: (semesterId: string) => Promise<Spieler[]>;
+    getSpielerListBySemesterId: (semesterId: string, pageNumber?: number, pageSize?: number) => Promise<SpielerListPage>;
     // Status
     getStatusBySpielerId: (id: string) => Promise<Status>;
     getStatusBySemesterId: (id: string) => Promise<Status[]>;
@@ -181,8 +181,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    const getAllSpieler = async (): Promise<Spieler[]> => {
-        const response = await getAllSpielerApi();
+    const getAllSpieler = async (pageNumber?: number, pageSize?: number): Promise<SpielerListPage> => {
+        const response = await getAllSpielerApi(pageNumber, pageSize);
         return response.data;
     }
 
@@ -194,8 +194,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         await updateSpielerApi(spieler);
     }
 
-    const getSpielerListBySemesterId = async (semesterId: string): Promise<Spieler[]> => {
-        const response = await getSpielerListBySemesterIdApi(semesterId);
+    const getSpielerListBySemesterId = async (semesterId: string, pageNumber?: number, pageSize?: number): Promise<SpielerListPage> => {
+        const response = await getSpielerListBySemesterIdApi(semesterId, pageNumber, pageSize);
         return response.data;
     }
 
@@ -382,6 +382,25 @@ export const TIME_UNIT: string = "Min." as const;
 export type TimeUnit = "Minuten" | "Stunden";
 
 export type NumberDecimalPlace = 0 | 1 | 2;
+
+export const DEFAULT_PAGE_SIZE = 5 as const;
+export const DEFAULT_INITIAL_PAGE_NUMBER = 0 as const;
+
+export type Pagination = {
+    pageNumber: number;
+    pageSize: number;
+};
+
+export type PaginationConfig = {
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
+    totalElements: number;
+    isFirst: boolean;
+    isLast: boolean;
+    onChangePage: (page: number) => void;
+    onChangeRowsPerPage: (pageSize: number) => void;
+};
 
 export enum AufgabeId {
     AUFGABE_1 = "30000000-0000-0000-0000-000000000001",

@@ -6,8 +6,18 @@ import useApplicationContext from "@/hooks/useApplicationContext";
 import useSWR from "swr";
 import {Ergebnis} from "@/api/ergebnis";
 import {Interaktion} from "@/api/interaktion";
-import {Spieler} from "@/api/spieler";
-import {AufgabeId, CleanResult, convertToTimeUnit, exportResult, getTimeUnitShorthand} from "@/contexts/ApplicationContext";
+import {Spieler, SpielerListPage} from "@/api/spieler";
+import {
+    AufgabeId,
+    CleanResult,
+    convertToTimeUnit,
+    DEFAULT_INITIAL_PAGE_NUMBER,
+    DEFAULT_PAGE_SIZE,
+    exportResult,
+    getTimeUnitShorthand,
+    Pagination,
+    PaginationConfig
+} from "@/contexts/ApplicationContext";
 import {ResultsTableComponent} from "@/components/ResultsTableComponent";
 import {Kommentar} from "@/api/kommentar";
 import {Status} from "@/api/status";
@@ -17,7 +27,6 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import Dropdown from '@mui/joy/Dropdown';
 import MenuButton from '@mui/joy/MenuButton';
-import {useSession} from "next-auth/react";
 
 export const ResultComponent: React.FC = () => {
     const { semester } = useApplicationContext();
@@ -49,7 +58,7 @@ export const ResultComponent: React.FC = () => {
             </Stack>
             {semester ?
                 <ResultWrapperComponent semesterId={semester.id}>
-                    {(cleanResults) =>
+                    {(cleanResults, paginationConfig) =>
                         <>
                             {cleanResults.length === 0 ?
                                 <Alert>
@@ -58,7 +67,10 @@ export const ResultComponent: React.FC = () => {
                                 </Alert>
                                 :
                                 <>
-                                    <ResultsTableComponent results={cleanResults} />
+                                    <ResultsTableComponent
+                                        results={cleanResults}
+                                        paginationConfig={paginationConfig}
+                                    />
                                     {createPortal(
                                         <Dropdown>
                                             <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
@@ -86,7 +98,7 @@ export const ResultComponent: React.FC = () => {
 
 type PropsResultWrapper = {
     semesterId: string;
-    children: (cleanResults: CleanResult[]) => void;
+    children: (cleanResults: CleanResult[], paginationConfig: PaginationConfig) => void;
 };
 const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
     const { semesterId, children } = props;
@@ -100,9 +112,14 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         getStatusBySemesterId,
     } = useApplicationContext();
     const [interactionList, setInteractionList] = useState<Interaktion[] | undefined>(undefined);
-    const [spielerList, setSpielerList] = useState<Spieler[] | undefined>(undefined);
+    const [spielerListPage, setSpielerListPage] = useState<SpielerListPage | undefined>(undefined);
     const [kommentarList, setKommentarList] = useState<Kommentar[] | undefined>(undefined);
     const [statusList, setStatusList] = useState<Status[] | undefined>(undefined);
+
+    const [pagination, setPagination] = useState<Pagination>({
+        pageNumber: DEFAULT_INITIAL_PAGE_NUMBER,
+        pageSize: DEFAULT_PAGE_SIZE,
+    });
 
     const {
         data: ergebnisList,
@@ -132,8 +149,12 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         if (!semesterId) return;
 
         const loadSpieler = async () => {
-            const loadedSpieler = await getSpielerListBySemesterId(semesterId);
-            setSpielerList(loadedSpieler);
+            const loadedSpieler = await getSpielerListBySemesterId(
+                semesterId,
+                pagination.pageNumber,
+                pagination.pageSize,
+            );
+            setSpielerListPage(loadedSpieler);
         }
 
         const loadKommentare = async () => {
@@ -149,7 +170,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         loadSpieler();
         loadKommentare();
         loadStatus();
-    }, [semesterId]);
+    }, [semesterId, pagination]);
 
     const resolveNumberOfInteractionOfPlayerInRoom = (playerId: string, aufgabeId: string): string => {
         if (!interactionList) return "";
@@ -248,13 +269,19 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         }));
     }
 
-    if (isLoadingErgebnis || !ergebnisList || !interactionList || !spielerList) return <Alert>Wird geladen...</Alert>
+    const paginationConfig: PaginationConfig = {
+        ...spielerListPage!,
+        onChangePage: (pageNumber: number) => setPagination((prev) => ({ ...prev, pageNumber })),
+        onChangeRowsPerPage: (pageSize: number) => setPagination((prev) => ({ ...prev, pageSize })),
+    };
+
+    if (isLoadingErgebnis || !ergebnisList || !interactionList || !spielerListPage) return <Alert>Wird geladen...</Alert>
 
     if (errorErgebnis) return <Alert color="danger">{(errorErgebnis as Error).message}</Alert>
 
     return (
         <>
-            {children ? children(computeCleanResults(spielerList)) : null}
+            {children ? children(computeCleanResults(spielerListPage.pageContent), paginationConfig) : null}
         </>
     );
 };

@@ -8,6 +8,16 @@ export type Spieler = {
     veranstaltungId: string;
 };
 
+export type SpielerListPage = {
+    pageContent: Spieler[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    isFirst: boolean;
+    isLast: boolean;
+};
+
 export type SpielerDto = Omit<Spieler, "id">;
 
 const ENDPOINT = "/spieler" as const;
@@ -16,16 +26,22 @@ export const getSpielerByIdApi = async (id: string): Promise<AxiosResponse<Spiel
     return await axiosClient.get<Spieler>(`${ENDPOINT}/${id}`);
 };
 
-export const getSpielerListBySemesterIdApi = async (semesterId: string): Promise<AxiosResponse<Spieler[]>> => {
-    return await axiosClient.get<Spieler[]>(`${ENDPOINT}/alle?semester_id=${semesterId}`);
+export const getSpielerListBySemesterIdApi = async (
+    semesterId: string,
+    pageNumber?: number,
+    pageSize?: number,
+): Promise<AxiosResponse<SpielerListPage>> => {
+    return await axiosClient.get<SpielerListPage>(
+        `${ENDPOINT}/alle?semester_id=${semesterId}&page_number=${pageNumber}&page_size=${pageSize}`
+    );
 };
 
 export const getSpielerBySpielerIdApi = async (avatarName: string): Promise<AxiosResponse<Spieler>> => {
     return await axiosClient.get<Spieler>(`${ENDPOINT}?spieler_id=${avatarName}`);
 }
 
-export const getAllSpielerApi = async (): Promise<AxiosResponse<Spieler[]>> => {
-    return await axiosClient.get<Spieler[]>(`${ENDPOINT}/alle`);
+export const getAllSpielerApi = async (pageNumber?: number, pageSize?: number): Promise<AxiosResponse<SpielerListPage>> => {
+    return await axiosClient.get<SpielerListPage>(`${ENDPOINT}/alle?page_number=${pageNumber}&page_size=${pageSize}`);
 };
 
 export const createSpielerApi = async (spielerDto: SpielerDto) => {
