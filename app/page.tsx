@@ -8,8 +8,12 @@ import {protectRoute} from "@/utils/protectRoute";
 const Home: React.FC = async () => {
     await protectRoute();
     return (
-        <PageWrapperComponent title={"Startseite"} rightContent={<SemesterSelectionComponent />}>
-            <Stack spacing={"var(--gap-3)"}>
+        <PageWrapperComponent
+            title={"Startseite"}
+            rightContent={<SemesterSelectionComponent />}
+            hideBackButton={true}
+        >
+            <Stack spacing={"var(--gap-3)"} sx={{ mt: "var(--gap-3)" }}>
                 <StatusListComponent />
             </Stack>
         </PageWrapperComponent>

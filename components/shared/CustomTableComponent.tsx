@@ -3,16 +3,15 @@ import React, {ReactNode} from "react";
 import {
     Box,
     Card,
-    Stack,
-    Table,
     FormControl,
     FormLabel,
-    Select,
-    Typography,
-    Option,
     IconButton,
+    Option,
+    Select,
+    Stack,
+    Table,
     TableProps,
-    Divider
+    Typography
 } from "@mui/joy";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -120,7 +119,7 @@ const PaginationComponent: React.FC<PaginationConfig> = (props) => {
     const handleChangeRowsPerPage = (_: any, newValue: number | null) => {
         if (!newValue) return;
         onChangeRowsPerPage(newValue);
-        //setPage(0);
+        onChangePage(0);
     };
 
     return (
@@ -183,5 +182,4 @@ const PaginationComponent: React.FC<PaginationConfig> = (props) => {
             </Box>
         </Card>
     )
-}
-
+};

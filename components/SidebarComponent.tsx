@@ -15,7 +15,6 @@ import {v4 as uuid} from "uuid";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SportsEsportsOutlinedIcon from '@mui/icons-material/SportsEsportsOutlined';
 import SportsKabaddiOutlinedIcon from '@mui/icons-material/SportsKabaddiOutlined';
-import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import Modal from '@mui/joy/Modal';
@@ -51,14 +50,6 @@ const SidebarComponent: React.FC<Props> = (props) => {
     const pathname = usePathname();
     const { isSmall } = useMediaQuery();
 
-    // useEffect(() => {
-    //     if (!isSmall && isMobile) {
-    //         setIsOpen(true);
-    //         return;
-    //     }
-    //     setIsOpen(false);
-    // }, [isMobile, isSmall]);
-
     const handleClick = (path: string) => {
         router.push(path);
         if (!onButtonClick) return;
@@ -91,12 +82,6 @@ const SidebarComponent: React.FC<Props> = (props) => {
             isActive: pathname.includes("/players"),
             onClick: () => handleClick("/players"),
         },
-        // {
-        //     label: "Räume",
-        //     icon: <MeetingRoomOutlinedIcon />,
-        //     isActive: pathname.includes("/rooms"),
-        //     onClick: () => handleClick("/rooms"),
-        // },
         {
             label: "Ergebnisse",
             icon: <AssessmentOutlinedIcon />,
@@ -127,7 +112,7 @@ const SidebarComponent: React.FC<Props> = (props) => {
 
     return (
         <SidebarWrapper>
-            <SidebarContainer>
+            <SidebarContainer issmall={String(isSmall) as "false" | "true"}>
                 <UpperButtonListContainer>
                     <ButtonListComponent
                         key={uuid()}
@@ -141,7 +126,7 @@ const SidebarComponent: React.FC<Props> = (props) => {
                     showLabel={isOpen}
                 />
             </SidebarContainer>
-            <Divider orientation={"vertical"} />
+            {isSmall ? null : <Divider orientation={"vertical"} />}
         </SidebarWrapper>
     );
 };
@@ -198,7 +183,7 @@ export const SidebarOnMobileComponent: React.FC = () => {
             <Modal open={isOpen} onClose={() => setIsOpen(false)}>
                 <ModalDialog layout={"fullscreen"}>
                     <ModalClose />
-                    <DialogTitle>{process.env.NEXT_PUBLIC_APPLICATION_NAME}</DialogTitle>
+                    <DialogTitle>Exit-Game HKA</DialogTitle>
                     <SidebarComponent isMobile={true} onButtonClick={() => setIsOpen(false)} />
                 </ModalDialog>
             </Modal>
@@ -215,11 +200,11 @@ const SidebarWrapper = styled(Box)`
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
 `;
-const SidebarContainer = styled(Box)`
+const SidebarContainer = styled(Box)<{ issmall: "true" | "false" }>`
     display: grid;
     gap: var(--gap-1);
     grid-template-rows: 1fr max-content;
-    padding: var(--gap-1);
+    padding: ${(props) => props.issmall === "true" ? "5px" : "var(--gap-1)"};
 `;
 const UpperButtonListContainer = styled(Box)`
     display: grid;
