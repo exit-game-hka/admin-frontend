@@ -15,7 +15,7 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
-import {Button, Typography, Switch, useColorScheme} from "@mui/joy";
+import {Button, Typography, Switch, useColorScheme, Stack} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import Autocomplete from '@mui/joy/Autocomplete';
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
@@ -189,24 +189,34 @@ const SettingOptionsComponent: React.FC = () => {
                 icon: <NotificationsActiveOutlinedIcon fontSize="small" />,
                 label: "Push-Benachrichtigungen",
                 value: (
-                    <Switch
-                        size="lg"
-                        checked={notificationContext.hasSubscribed}
-                        onClick={() => {
-                            console.log("notificationContext.hasSubscribed: ", notificationContext.hasSubscribed);
-                            if (notificationContext.hasSubscribed) {
-                                notificationContext.unSubscribeToNotifications();
-                                return;
-                            }
-                            notificationContext.subscribeToNotifications();
-                        }}
-                    />
+                    <Stack alignItems="center" alignContent="center">
+                        <Switch
+                            size="lg"
+                            checked={notificationContext.hasSubscribed}
+                            onClick={() => {
+                                if (notificationContext.hasSubscribed) {
+                                    notificationContext.unSubscribeToNotifications();
+                                    return;
+                                }
+                                notificationContext.subscribeToNotifications();
+                            }}
+                        />
+                    </Stack>
                 ),
             },
             {
                 icon: <VolumeUpOutlinedIcon fontSize="small" />,
                 label: "Mitteilungston",
-                value: <Switch size="lg" />,
+                value: (
+                    <Stack alignItems="center" alignContent="center">
+                        <Switch
+                            disabled={!notificationContext.hasSubscribed}
+                            size="lg"
+                            checked={notificationContext.isNotificationSoundActive}
+                            onClick={notificationContext.toggleNotificationSound}
+                        />
+                    </Stack>
+                ),
             },
         ],
         detail: "Wenn aktiviert, werden Push-Benachrichtigungen 20 Sekunden lang angezeigt. Es wird kein Benachrichtigungston automatisch abgespielt, wenn die Push-Benachrichtigungen ausgeschaltet sind.",

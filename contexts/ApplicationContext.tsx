@@ -136,16 +136,6 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         getNumberDecimalPlaceFromLocalStorage();
     }, []);
 
-    useEffect(() => {
-        if (!newNotification) return;
-        const notificationSoundEffect = new Audio(`${process.env.NEXT_PUBLIC_BASE_PATH}/soundfx/new-notification.mp3`);
-        notificationSoundEffect.play();
-        return () => {
-            notificationSoundEffect.pause();
-            notificationSoundEffect.remove();
-        };
-    }, [newNotification, setNewNotification]);
-
     const setTimeUnitHandler = (timeUnit: TimeUnit) => {
         localStorage.setItem("time-unit", timeUnit);
         setTimeUnit(timeUnit);
