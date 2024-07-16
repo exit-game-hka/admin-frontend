@@ -7,6 +7,12 @@ import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined';
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import {SidebarOnMobileComponent} from "@/components/SidebarComponent";
 import AuthStatusComponent from "@/components/AuthStatusComponent";
+import dynamic from "next/dynamic";
+
+const NotificationListComponent = dynamic(
+    () => import("@/components/NotificationListComponent"),
+    { ssr: false }
+);
 
 /**
  * React-Komponente für die App Bar der Anwendung.
@@ -34,6 +40,7 @@ const AppBarComponent: React.FC = () => {
                     <IconButton onClick={switchMode}>
                         {mode === "light" ? <NightsStayOutlinedIcon /> : <WbSunnyOutlinedIcon />}
                     </IconButton>
+                    <NotificationListComponent />
                     <AuthStatusComponent />
                 </NavigationBarOptionsContainer>
             </NavigationBarContainer>

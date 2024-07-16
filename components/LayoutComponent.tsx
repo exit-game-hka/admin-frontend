@@ -13,6 +13,11 @@ const SidebarComponent = dynamic(
     () => import("@/components/SidebarComponent"),
     { ssr: false }
 );
+
+const WebSocketNotification = dynamic(
+    () => import("@/components/WebSocketNotification"),
+    { ssr: false }
+);
 /**
  * Typ-Alias für die Eigenschaften der `LayoutComponent`.
  *
@@ -36,6 +41,7 @@ const LayoutComponent: React.FC<Props> = (props: PropsWithChildren) => {
                     <SidebarComponent />
                 </SidebarStickyContainer>
                 <MainBoxContainer component="main">{children}</MainBoxContainer>
+                <WebSocketNotification />
             </SidebarAndMainContentContainer>
         </ApplicationMainContainer>
     );

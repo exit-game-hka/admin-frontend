@@ -13,19 +13,23 @@ import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
 import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
-import {Button, Typography, useColorScheme} from "@mui/joy";
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
+import {Button, Typography, Switch, useColorScheme} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import Autocomplete from '@mui/joy/Autocomplete';
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 import {useAuth} from "@/hooks/useAuth";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import {NumberDecimalPlace, TimeUnit} from "@/contexts/ApplicationContext";
+import {useNotificationContext} from "@/contexts/NotificationContext";
 
-type GroupName = "Benutzer-Infos" | "Darstellung" | "Anzeige" | "Über die Anwendung";
+type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung";
 const SettingOptionsComponent: React.FC = () => {
     const {isSmall} = useMediaQuery();
     const { mode, setMode } = useColorScheme();
     const appContext = useApplicationContext();
+    const notificationContext = useNotificationContext();
     const { signOut, data: session } = useAuth();
 
     const modeOptions = [
@@ -178,7 +182,37 @@ const SettingOptionsComponent: React.FC = () => {
         ],
     };
 
-    const allGroups: Group<GroupName>[] = [userInfo, display, illustration, aboutTheApp];
+    const notifications: Group<GroupName> = {
+        name: "Mitteilungen",
+        items: [
+            {
+                icon: <NotificationsActiveOutlinedIcon fontSize="small" />,
+                label: "Push-Benachrichtigungen",
+                value: (
+                    <Switch
+                        size="lg"
+                        checked={notificationContext.hasSubscribed}
+                        onClick={() => {
+                            console.log("notificationContext.hasSubscribed: ", notificationContext.hasSubscribed);
+                            if (notificationContext.hasSubscribed) {
+                                notificationContext.unSubscribeToNotifications();
+                                return;
+                            }
+                            notificationContext.subscribeToNotifications();
+                        }}
+                    />
+                ),
+            },
+            {
+                icon: <VolumeUpOutlinedIcon fontSize="small" />,
+                label: "Mitteilungston",
+                value: <Switch size="lg" />,
+            },
+        ],
+        detail: "Wenn aktiviert, werden Push-Benachrichtigungen 20 Sekunden lang angezeigt. Es wird kein Benachrichtigungston automatisch abgespielt, wenn die Push-Benachrichtigungen ausgeschaltet sind.",
+    }
+
+    const allGroups: Group<GroupName>[] = [userInfo, display, notifications, illustration, aboutTheApp];
 
     return (
         <DetailsListComponent groups={allGroups} />

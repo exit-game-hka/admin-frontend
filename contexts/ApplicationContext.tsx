@@ -49,6 +49,12 @@ import {
     Kommentar
 } from "@/api/kommentar";
 import exportFromJSON from "export-from-json";
+import {
+    deleteAllNotificationsApi,
+    deleteNotificationByIdApi,
+    getAllNotificationApi,
+    Notification, setAllNotificationAsSeenApi
+} from "@/api/notification";
 
 type ContextOutput = {
     semester: Semester | undefined;
@@ -73,8 +79,6 @@ type ContextOutput = {
     // Status
     getStatusBySpielerId: (id: string) => Promise<Status>;
     getStatusBySemesterId: (id: string) => Promise<Status[]>;
-    //createStatus: (statusDto: StatusDto) => Promise<void>;
-    //updateStatus: (status: Status) => Promise<void>;
     getVeranstaltungById: (id: string) => Promise<Veranstaltung>;
     getAllVeranstaltungen: () => Promise<Veranstaltung[]>;
     createVeranstaltung: (veranstaltungDto: VeranstaltungDto) => Promise<void>;
@@ -83,7 +87,6 @@ type ContextOutput = {
     getErgebnisByAufgabeIdAndSpielerId: (aufgabeId: string, spielerId: string) => Promise<Ergebnis[]>;
     getErgebnisBySemesterId: (id: string) => Promise<Ergebnis[]>;
     getErgebnisBySpielerId: (spielerId: string) => Promise<Ergebnis[]>;
-    //createErgebnis: (ergebnisDto: ErgebnisDto) => Promise<void>;
     // Kommentare
     getKommentarById: (id: string) => Promise<Kommentar>;
     getKommentareBySemesterId: (semesterId: string) => Promise<Kommentar[]>;
@@ -94,6 +97,13 @@ type ContextOutput = {
     setTimeUnit: (timeUnit: TimeUnit) => void;
     numberDecimalPlace: NumberDecimalPlace;
     setNumberDecimalPlace: (numberDecimalPlace: NumberDecimalPlace) => void;
+    // Notifications
+    newNotification: Notification | undefined;
+    setNewNotification: (notification: Notification | undefined) => void;
+    getAllNotifications: () => Promise<Notification[]>;
+    deleteNotificationById: (id: string) => Promise<void>;
+    deleteAllNotifications: () => Promise<void>;
+    setAllNotificationAsSeen: () => Promise<void>;
 }
 
 // @ts-ignore
@@ -107,6 +117,7 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     const [semester, setSemester] = useState<Semester | undefined>(undefined);
     const [timeUnit, setTimeUnit] = useState<TimeUnit>("Minuten");
     const [numberDecimalPlace, setNumberDecimalPlace] = useState<NumberDecimalPlace>(0);
+    const [newNotification, setNewNotification] = useState<Notification | undefined>(undefined);
 
     useEffect(() => {
         const getTimeUnitFromLocalStorage = () => {
@@ -124,6 +135,16 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         getTimeUnitFromLocalStorage();
         getNumberDecimalPlaceFromLocalStorage();
     }, []);
+
+    useEffect(() => {
+        if (!newNotification) return;
+        const notificationSoundEffect = new Audio(`${process.env.NEXT_PUBLIC_BASE_PATH}/soundfx/new-notification.mp3`);
+        notificationSoundEffect.play();
+        return () => {
+            notificationSoundEffect.pause();
+            notificationSoundEffect.remove();
+        };
+    }, [newNotification, setNewNotification]);
 
     const setTimeUnitHandler = (timeUnit: TimeUnit) => {
         localStorage.setItem("time-unit", timeUnit);
@@ -209,15 +230,6 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    // const createStatus = async (statusDto: StatusDto): Promise<void> => {
-    //     const response = await createStatusApi(statusDto);
-    //     return response.data;
-    // }
-    //
-    // const updateStatus = async (status: Status): Promise<void> => {
-    //     await updateStatusApi(status);
-    // }
-
     const getVeranstaltungById = async (id: string): Promise<Veranstaltung> => {
         const response = await getVeranstaltungByIdApi(id);
         return response.data;
@@ -252,10 +264,6 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         return response.data;
     }
 
-    // const createErgebnis = async (ergebnisDto: ErgebnisDto): Promise<void> => {
-    //     await createErgebnisApi(ergebnisDto);
-    // }
-
     const getKommentarById = async (id: string): Promise<Kommentar> => {
         const response = await getKommentarByIdApi(id);
         return convertToKommentarModel(response.data);
@@ -275,6 +283,23 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
         const response = await getKommentareBySpielerIdAndSemesterIdApi(spielerId, semesterId);
         return response.data.map((k) => convertToKommentarModel(k));
     };
+
+    const getAllNotifications = async (): Promise<Notification[]> => {
+        const response = await getAllNotificationApi();
+        return response.data;
+    };
+
+    const deleteNotificationById = async (id: string): Promise<void> => {
+        await deleteNotificationByIdApi(id);
+    };
+
+    const deleteAllNotifications = async (): Promise<void> => {
+        await deleteAllNotificationsApi();
+    };
+
+    const setAllNotificationAsSeen = async (): Promise<void> => {
+        await setAllNotificationAsSeenApi();
+    }
 
     return (
         <ApplicationContext.Provider value={{
@@ -296,8 +321,6 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getSpielerListBySemesterId,
             getStatusBySpielerId,
             getStatusBySemesterId,
-            //createStatus,
-            //updateStatus,
             getVeranstaltungById,
             getAllVeranstaltungen,
             createVeranstaltung,
@@ -305,7 +328,6 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             getErgebnisByAufgabeIdAndSpielerId,
             getErgebnisBySemesterId,
             getErgebnisBySpielerId,
-            //createErgebnis,
             getKommentarById,
             getKommentareBySemesterId,
             getKommentareBySpielerId,
@@ -314,6 +336,12 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             setTimeUnit: setTimeUnitHandler,
             numberDecimalPlace,
             setNumberDecimalPlace: setNumberDecimalPlaceHandler,
+            newNotification,
+            setNewNotification,
+            getAllNotifications,
+            deleteNotificationById,
+            deleteAllNotifications,
+            setAllNotificationAsSeen,
         }}>
             {children}
         </ApplicationContext.Provider>
