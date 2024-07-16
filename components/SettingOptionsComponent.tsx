@@ -15,9 +15,8 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
-import {Button, Typography, Switch, useColorScheme, Stack} from "@mui/joy";
+import {Button, Option, Select, Stack, Switch, Typography, useColorScheme} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
-import Autocomplete from '@mui/joy/Autocomplete';
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 import {useAuth} from "@/hooks/useAuth";
 import useApplicationContext from "@/hooks/useApplicationContext";
@@ -25,6 +24,7 @@ import {NumberDecimalPlace, TimeUnit} from "@/contexts/ApplicationContext";
 import {useNotificationContext} from "@/contexts/NotificationContext";
 
 type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung";
+
 const SettingOptionsComponent: React.FC = () => {
     const {isSmall} = useMediaQuery();
     const { mode, setMode } = useColorScheme();
@@ -36,6 +36,24 @@ const SettingOptionsComponent: React.FC = () => {
         {label: "Dunkel", value: "dark"},
         {label: "Hell", value: "light"},
     ];
+
+    const timeUnitOptions: ("Minuten" | "Stunden")[] = ["Minuten", "Stunden"];
+
+    const decimalPlaceOptions: NumberDecimalPlace[] = [0, 1, 2];
+
+    const languageOptions: string[] = ["Deutsch"];
+
+    const handleChangeMode = (e: any) => {
+        setMode(e.target.innerText as Mode)
+    };
+
+    const handleChangeTimeUnit = (e: any) => {
+        appContext.setTimeUnit(e.target.innerText as TimeUnit)
+    };
+
+    const handleChangeDecimalPlace = (e: any) => {
+        appContext.setNumberDecimalPlace(parseInt(e.target.innerText) as NumberDecimalPlace);
+    };
 
     const userInfo: Group<GroupName> = {
         name: "Benutzer-Infos",
@@ -85,44 +103,45 @@ const SettingOptionsComponent: React.FC = () => {
                 icon: <LightModeOutlinedIcon fontSize="small" />,
                 label: "Modus",
                 value: (
-                    <Autocomplete
-                        size="sm"
-                        value={mode === "dark" ? modeOptions[0] : modeOptions[1]}
-                        options={modeOptions}
-                        disableClearable={true}
-                        getOptionLabel={(o) => o.label}
-                        onChange={(_, newValue) => setMode(newValue?.value as Mode)}
+                    <Select
+                        defaultValue={mode}
+                        onChange={handleChangeMode}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
-                    />
+                    >
+                        {modeOptions.map((mode) =>
+                            <Option key={mode.value} value={mode.value}>{mode.value}</Option>
+                        )}
+                    </Select>
                 ),
             },
             {
                 icon: <WatchLaterOutlinedIcon fontSize="small" />,
                 label: "Zeiteinheit",
                 value: (
-                    <Autocomplete
-                        size="sm"
-                        value={appContext.timeUnit}
-                        disableClearable={true}
-                        options={["Minuten", "Stunden"]}
-                        onChange={(_, newValue) => appContext.setTimeUnit(newValue as TimeUnit)}
+                    <Select
+                        defaultValue={appContext.timeUnit}
+                        onChange={handleChangeTimeUnit}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
-                    />
+                    >
+                        {timeUnitOptions.map((t) =>
+                            <Option key={t} value={t}>{t}</Option>
+                        )}
+                    </Select>
                 ),
             },
             {
                 icon: <NumbersOutlinedIcon fontSize="small" />,
                 label: "Nachkommastellen",
                 value: (
-                    <Autocomplete
-                        size="sm"
-                        value={appContext.numberDecimalPlace}
-                        options={[0, 1, 2]}
-                        disableClearable={true}
-                        //getOptionLabel={(o) => o.label}
-                        onChange={(_, newValue) => appContext.setNumberDecimalPlace(newValue as NumberDecimalPlace)}
+                    <Select
+                        defaultValue={appContext.numberDecimalPlace}
+                        onChange={handleChangeDecimalPlace}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
-                    />
+                    >
+                        {decimalPlaceOptions.map((dp) =>
+                            <Option key={dp} value={dp}>{dp}</Option>
+                        )}
+                    </Select>
                 ),
             },
         ],
@@ -135,15 +154,14 @@ const SettingOptionsComponent: React.FC = () => {
                 icon: <LanguageOutlinedIcon fontSize="small" />,
                 label: "Sprache",
                 value: (
-                    <Autocomplete
-                        size="sm"
-                        value={"Deutsch"}
-                        options={["Deutsch"]}
-                        disableClearable={true}
-                        //getOptionLabel={(o) => o.label}
-                        //onChange={(_, newValue) => setMode(newValue?.value as Mode)}
+                    <Select
+                        defaultValue={"Deutsch"}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
-                    />
+                    >
+                        {languageOptions.map((l) =>
+                            <Option key={l} value={l}>{l}</Option>
+                        )}
+                    </Select>
                 ),
             },
             {
