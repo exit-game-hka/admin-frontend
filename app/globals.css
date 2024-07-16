@@ -21,6 +21,8 @@ body {
 :root {
 
   --appbar-min-height: 60px;
+  /* Important for wide screens and for user with an extra large zoomed-in display */
+  --page-main-content-max-width: 1700px;
 
   /* Schriftgrößen */
   --font-small-size: 14px;

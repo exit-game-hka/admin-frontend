@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Alert, Box, Menu, MenuItem, Stack} from "@mui/joy";
 import {SemesterSelectionComponent} from "@/components/shared/SemesterSelectionComponent";
 import useApplicationContext from "@/hooks/useApplicationContext";
@@ -235,7 +235,10 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         return statusOfPlayer.istSpielBeendet ? "Beendet" : "Nicht Beendet";
     }
 
-    const computeCleanResults = (spielerList: Spieler[]): CleanResult[] => {
+    const computeCleanResults = useCallback((): CleanResult[] => {
+        const spielerList: Spieler[] | undefined = spielerListPage?.pageContent;
+        if (!spielerList || spielerList.length === 0) return [];
+
         return spielerList.map((s) => ({
             spielerId: s.spielerId,
             idOfPlayer: s.id,
@@ -267,7 +270,7 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
             hasFinishedGame: resolveStatusOfPlayer(s.id),
             comments: resolveKommentareOfPlayer(s.id),
         }));
-    }
+    }, [spielerListPage, interactionList, kommentarList, statusList]);
 
     const paginationConfig: PaginationConfig = {
         ...spielerListPage!,
@@ -275,13 +278,17 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         onChangeRowsPerPage: (pageSize: number) => setPagination((prev) => ({ ...prev, pageSize })),
     };
 
-    if (isLoadingErgebnis || !ergebnisList || !interactionList || !spielerListPage) return <Alert>Wird geladen...</Alert>
+    if (isLoadingErgebnis ||
+        !ergebnisList ||
+        !interactionList ||
+        !spielerListPage
+    ) return <Alert>Wird geladen...</Alert>
 
     if (errorErgebnis) return <Alert color="danger">{(errorErgebnis as Error).message}</Alert>
 
     return (
         <>
-            {children ? children(computeCleanResults(spielerListPage.pageContent), paginationConfig) : null}
+            {children ? children(computeCleanResults(), paginationConfig) : null}
         </>
     );
 };

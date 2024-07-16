@@ -10,19 +10,33 @@ import {Ergebnis} from "@/api/ergebnis";
 import {TIME_UNIT} from "@/contexts/ApplicationContext";
 
 export const StatusListComponent: React.FC = () => {
-    const { semester, getStatusBySemesterId, getErgebnisBySemesterId } = useApplicationContext();
+    const { semester } = useApplicationContext();
+
+    if (!semester) return <Alert color="warning">Wählen Sie erst ein Semester aus </Alert>;
+
+    return (
+        <StatusListRendererComponent semesterId={semester.id} />
+    );
+};
+
+type PropsStatusListRenderer = {
+    semesterId: string;
+};
+const StatusListRendererComponent: React.FC<PropsStatusListRenderer> = (props) => {
+    const { semesterId } = props;
+    const { getStatusBySemesterId, getErgebnisBySemesterId } = useApplicationContext();
 
     const {
         data: statusList,
         isLoading,
         error,
-    } = useSWR<Status[]>(`getStatusBySemesterId-${semester?.id}`, async () => await getStatusBySemesterId(semester?.id!));
+    } = useSWR<Status[]>(`getStatusBySemesterId-${semesterId}`, async () => await getStatusBySemesterId(semesterId));
 
     const {
         data: ergebnisList,
         isLoading: isLoadingErgebnis,
         error: errorErgebnis,
-    } = useSWR<Ergebnis[]>(`getErgebnisBySemesterId-${semester?.id}`, async () => await getErgebnisBySemesterId(semester?.id!));
+    } = useSWR<Ergebnis[]>(`getErgebnisBySemesterId-${semesterId}`, async () => await getErgebnisBySemesterId(semesterId));
 
     const resolveTotalPlayTimeOfPlayer = useCallback((playerId: string): number => {
         if (!ergebnisList) return 0;
@@ -46,11 +60,9 @@ export const StatusListComponent: React.FC = () => {
         return `${(sum / playerIdsDistinct.length).toFixed(0)} ${TIME_UNIT}`;
     }
 
-    if (!semester) return <Alert color="warning">Wählen Sie erst ein Semester aus </Alert>
+    if (isLoading || isLoadingErgebnis || !statusList) return <Alert color="warning">Wird geladen...</Alert>;
 
-    if (isLoading || !statusList) return <Alert color="warning">Wird geladen...</Alert>
-
-    if (error || errorErgebnis) return <Alert color="danger">Fehler beim Laden der Daten</Alert>
+    if (error || errorErgebnis) return <Alert color="danger">Fehler beim Laden der Daten</Alert>;
 
     return (
         <StatusListContainer>
@@ -72,7 +84,7 @@ export const StatusListComponent: React.FC = () => {
             />
         </StatusListContainer>
     );
-};
+}
 
 const StatusListContainer = styled(Box)`
     display: grid;
@@ -83,4 +95,3 @@ const StatusListContainer = styled(Box)`
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 `;
-

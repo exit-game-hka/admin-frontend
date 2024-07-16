@@ -40,7 +40,11 @@ const LayoutComponent: React.FC<Props> = (props: PropsWithChildren) => {
                 <SidebarStickyContainer>
                     <SidebarComponent />
                 </SidebarStickyContainer>
-                <MainBoxContainer component="main">{children}</MainBoxContainer>
+                <MainBoxWrapper component="div">
+                    <MainBoxContainer component="main">
+                        {children}
+                    </MainBoxContainer>
+                </MainBoxWrapper>
                 <WebSocketNotification />
             </SidebarAndMainContentContainer>
         </ApplicationMainContainer>
@@ -73,11 +77,19 @@ const SidebarAndMainContentContainer = styled(Box)`
     }
 `;
 
+const MainBoxWrapper = styled(Box)`
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    justify-items: center;
+    overflow-y: auto
+`;
+
 const MainBoxContainer = styled(Box)`
     padding: 0 var(--gap-4) var(--gap-8) var(--gap-4);
     border-radius: var(--gap-1) 0 0 0;
     width: 100%;
-    overflow-y: auto;
+    max-width: var(--page-main-content-max-width);
 
     @media screen and (max-width: 900px) {
         padding: 0 var(--gap-2) var(--gap-8) var(--gap-2);
