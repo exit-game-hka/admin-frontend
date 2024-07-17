@@ -43,7 +43,7 @@ export const DetailsListComponent = <U extends string>(
                         {group.name}
                     </Typography>
                     <List
-                        variant="outlined"
+                        variant="soft"
                         sx={{
                             borderRadius: "md",
                             width: "100%",

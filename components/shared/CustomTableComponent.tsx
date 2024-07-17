@@ -38,8 +38,10 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
         <Stack component="div" spacing="var(--gap-3)">
             <Table
                 size="lg"
-                variant="outlined"
+                //variant="soft"
                 sx={{ borderRadius: "lg" }}
+                borderAxis="both"
+                //stripe="odd"
                 {...tableProps}
             >
                 <Box
@@ -58,7 +60,6 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
                         "& tr:first-child th:last-child": {
                             borderTopRightRadius: "12px !important",
                         },
-
                     }}
                 >
                     {headerCells}

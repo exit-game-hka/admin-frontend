@@ -157,6 +157,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                 }
                             </Alert>
                             <CustomTableComponent
+                                borderAxis="both"
                                 headerCells={
                                     <Box component="tr">
                                         <Box component="th" sx={{ width: "50px" }}></Box>
@@ -193,6 +194,7 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                                 {ergebnisList.length} Versuche
                             </Alert>
                             <CustomTableComponent
+                                borderAxis="both"
                                 headerCells={
                                     <Box component="tr">
                                         <Box component="th" sx={{ width: "50px" }}></Box>

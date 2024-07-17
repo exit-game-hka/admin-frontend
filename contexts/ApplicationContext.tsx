@@ -401,7 +401,7 @@ export type TimeUnit = "Minuten" | "Stunden";
 
 export type NumberDecimalPlace = 0 | 1 | 2;
 
-export const DEFAULT_PAGE_SIZE = 5 as const;
+export const DEFAULT_PAGE_SIZE = 10 as const;
 export const DEFAULT_INITIAL_PAGE_NUMBER = 0 as const;
 
 export type Pagination = {
