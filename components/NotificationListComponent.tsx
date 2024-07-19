@@ -150,7 +150,7 @@ const NotificationListComponent: React.FC = () => {
                                     level="body-sm"
                                     sx={{
                                         mb: 0.5,
-                                        ml: 1,
+                                        mx: 1,
                                     }}
                                 >
                                     {notification.content}

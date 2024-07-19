@@ -35,13 +35,14 @@ const NotificationPopUpComponent: React.FC<Props> = (props) => {
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 sx={(theme) => ({
                     background: `linear-gradient(45deg, ${theme.palette.primary[600]} 30%, ${theme.palette.primary[500]} 90%})`,
-                    maxWidth: isSmall ? "100dvw" : 550,
+                    maxWidth: isSmall ? "90dvw" : 550,
+                    minWidth: isSmall ? "90dvw" : 550,
                     borderRadius: "lg",
                     px: 1,
                     py: 1,
                 })}
             >
-                <div>
+                <Stack sx={{ width: "100%" }}>
                     <Stack direction="row">
                         <Typography
                             level="title-sm"
@@ -62,12 +63,12 @@ const NotificationPopUpComponent: React.FC<Props> = (props) => {
                         level="body-sm"
                         sx={{
                             mb: 1,
-                            ml: 1,
+                            mx: 1,
                         }}
                     >
                         {notification.content}
                     </Typography>
-                </div>
+                </Stack>
             </Snackbar>
         </React.Fragment>
     );

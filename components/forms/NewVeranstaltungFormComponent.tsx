@@ -93,7 +93,7 @@ export const NewVeranstaltungFormComponent: React.FC = () => {
                         }
                     }}
                 />
-                <FormHelperText>Worum es dabei handelt. Dieses Feld ist optional</FormHelperText>
+                <FormHelperText>Worum es geht. Dieses Feld ist optional</FormHelperText>
             </FormControl>
             {formError ? <Alert color="danger">{formError}</Alert> : null}
             <Button onClick={handleSubmit}>Speichern</Button>
