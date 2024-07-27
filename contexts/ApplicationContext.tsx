@@ -55,6 +55,10 @@ import {
     getAllNotificationApi,
     Notification, setAllNotificationAsSeenApi
 } from "@/api/notification";
+import {AxiosResponse} from "axios";
+import {getAllRoomsApi, getRoomByIdApi, Raum, updateRoomApi} from "@/api/raum";
+import {Aufgabe, updateAufgabeApi} from "@/api/aufgabe";
+import {Loesung, updateLoesungApi} from "@/api/loesung";
 
 type ContextOutput = {
     semester: Semester | undefined;
@@ -104,6 +108,15 @@ type ContextOutput = {
     deleteNotificationById: (id: string) => Promise<void>;
     deleteAllNotifications: () => Promise<void>;
     setAllNotificationAsSeen: () => Promise<void>;
+    // Rooms
+    getRoomById: (id: string) => Promise<Raum>;
+    getAllRooms: () => Promise<Raum[]>;
+    updateRoom: (raum: Raum) => Promise<void>;
+    // Aufgaben
+    updateAufgabe: (aufgabe: Aufgabe) => Promise<void>;
+    // Loesungen
+    updateLoesung: (loesung: Loesung) => Promise<void>;
+
 }
 
 // @ts-ignore
@@ -289,6 +302,28 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
 
     const setAllNotificationAsSeen = async (): Promise<void> => {
         await setAllNotificationAsSeenApi();
+    };
+
+    const getRoomById = async (id: string): Promise<Raum> => {
+        const response = await getRoomByIdApi(id);
+        return response.data;
+    };
+
+    const getAllRooms = async (): Promise<Raum[]> => {
+        const response = await getAllRoomsApi();
+        return response.data;
+    };
+
+    const updateRoom = async (raum: Raum): Promise<void> => {
+        await updateRoomApi(raum);
+    };
+
+    const updateAufgabe = async (aufgabe: Aufgabe): Promise<void> => {
+        await updateAufgabeApi(aufgabe);
+    };
+
+    const updateLoesung = async (loesung: Loesung): Promise<void> => {
+        await updateLoesungApi(loesung);
     }
 
     return (
@@ -332,6 +367,11 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             deleteNotificationById,
             deleteAllNotifications,
             setAllNotificationAsSeen,
+            getRoomById,
+            getAllRooms,
+            updateRoom,
+            updateAufgabe,
+            updateLoesung,
         }}>
             {children}
         </ApplicationContext.Provider>

@@ -22,6 +22,7 @@ import ModalClose from '@mui/joy/ModalClose';
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import MenuIcon from "@mui/icons-material/Menu";
+import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined';
 
 const INITIAL_SIDEBAR_STATE = true;
 
@@ -81,6 +82,12 @@ const SidebarComponent: React.FC<Props> = (props) => {
             icon: <SportsKabaddiOutlinedIcon />,
             isActive: pathname.includes("/players"),
             onClick: () => handleClick("/players"),
+        },
+        {
+            label: "Räume",
+            icon: <MeetingRoomOutlinedIcon />,
+            isActive: pathname.includes("/rooms"),
+            onClick: () => handleClick("/rooms"),
         },
         {
             label: "Ergebnisse",
