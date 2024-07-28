@@ -39,6 +39,13 @@ const authOptions: AuthOptions = {
     //secret: process.env.NEXTAUTH_SECRET,
 
     callbacks: {
+        // Siehe: https://next-auth.js.org/configuration/callbacks#redirect-callback
+        async redirect({ url, baseUrl }) {
+            // Allows relative callback URLs
+            if (url.startsWith("/")) return `${baseUrl}${url}`
+            return url;
+        },
+
         // @ts-ignore
         async jwt({ token, account }) {
             const nowTimeStamp = Math.floor(Date.now() / 1000);
