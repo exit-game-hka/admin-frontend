@@ -36,7 +36,7 @@ const authOptions: AuthOptions = {
         }),
     ],
 
-    secret: process.env.NEXTAUTH_SECRET,
+    //secret: process.env.NEXTAUTH_SECRET,
 
     callbacks: {
         // @ts-ignore
