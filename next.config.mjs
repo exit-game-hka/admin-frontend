@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    basePath: "/exit-game-admin-dashboard",
+    basePath: process.env.NEXT_PUBLIC_BASE_PATH,
     compiler: {
         styledComponents: true,
     },
