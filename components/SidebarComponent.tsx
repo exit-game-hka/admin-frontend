@@ -71,12 +71,12 @@ const SidebarComponent: React.FC<Props> = (props) => {
             onClick: () => handleClick("/semester"),
 
         },
-        {
-            label: "Fachgebiete",
-            icon: <SportsEsportsOutlinedIcon />,
-            isActive: pathname.includes("/lessons"),
-            onClick: () => handleClick("/lessons"),
-        },
+        // {
+        //     label: "Fachgebiete",
+        //     icon: <SportsEsportsOutlinedIcon />,
+        //     isActive: pathname.includes("/lessons"),
+        //     onClick: () => handleClick("/lessons"),
+        // },
         {
             label: "Spieler",
             icon: <SportsKabaddiOutlinedIcon />,

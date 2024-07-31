@@ -7,9 +7,11 @@ import {Alert, Box} from "@mui/joy";
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
+import {useAuth} from "@/hooks/useAuth";
 
 export const SemesterListComponent: React.FC = () => {
     const { isSmall } = useMediaQuery();
+    const { data: session } = useAuth();
     const { getAllSemester } = useApplicationContext();
     const {
         data: semesters,

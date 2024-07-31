@@ -18,11 +18,13 @@ import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
 import WifiTetheringErrorRoundedOutlinedIcon from "@mui/icons-material/WifiTetheringErrorRoundedOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import {ADMIN_ROLE, useAuth} from "@/hooks/useAuth";
 
 type AufgabeInfoGroupName = "Rätsel" | "Lösung" | "Beschreibung";
 
 const RoomDetailedInfoComponent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { data: session } = useAuth();
     const { isSmall } = useMediaQuery();
     const { getRoomById } = useApplicationContext();
     const [showEditForm, setShowEditForm] = useState<boolean>(false);
@@ -85,9 +87,14 @@ const RoomDetailedInfoComponent: React.FC = () => {
                         )}
                     </Stack>
                 </Stack>
-                <Button disabled={showEditForm} onClick={() => setShowEditForm(true)}>
-                    Bearbeiten
-                </Button>
+                {// @ts-ignore
+                    session?.roles?.includes(ADMIN_ROLE) ?
+                    <Button disabled={showEditForm} onClick={() => setShowEditForm(true)}>
+                        Bearbeiten
+                    </Button>
+                    :
+                    null
+                }
             </Stack>
             {showEditForm ?
                 <EditTaskFormComponent
