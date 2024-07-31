@@ -1,11 +1,14 @@
+"use client";
 import {useEffect} from "react";
-import {signIn, signOut, useSession} from "next-auth/react";
-import {SessionContextValue} from "next-auth/react";
+import {SessionContextValue, signIn, SignInOptions, signOut, useSession} from "next-auth/react";
 import axios from "axios";
+
+export const ADMIN_ROLE = "admin" as const;
 
 type Output = SessionContextValue & {
     signIn: () => Promise<void>;
     signOut: () => Promise<void>;
+    isAdmin: boolean;
 };
 export const useAuth = (): Output => {
     const sessionData = useSession();
@@ -37,12 +40,17 @@ export const useAuth = (): Output => {
     };
 
     const handleLogin = async () => {
-        await signIn("keycloak");
+        const signInOptions: SignInOptions | undefined = {
+            callbackUrl: process.env.NEXT_PUBLIC_BASE_PATH,
+        };
+        await signIn("keycloak", signInOptions);
     }
 
     return {
-       ...sessionData,
+        ...sessionData,
         signIn: handleLogin,
         signOut: handleLogout,
+        // @ts-ignore
+        isAdmin: session?.roles?.includes(ADMIN_ROLE),
     };
 };

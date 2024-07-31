@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useEffect} from "react";
 import {DetailsListComponent, Group} from "@/components/shared/DetailListComponent";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
@@ -15,7 +15,7 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
-import {Button, Option, Select, Stack, Switch, Typography, useColorScheme} from "@mui/joy";
+import {Button, Chip, Option, Select, Stack, Switch, Typography, useColorScheme} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 import {useAuth} from "@/hooks/useAuth";
@@ -25,17 +25,17 @@ import {useNotificationContext} from "@/contexts/NotificationContext";
 
 type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung";
 
+const modeOptions = [
+    {label: "Dunkel", value: "dark"},
+    {label: "Hell", value: "light"},
+];
+
 const SettingOptionsComponent: React.FC = () => {
     const {isSmall} = useMediaQuery();
     const { mode, setMode } = useColorScheme();
     const appContext = useApplicationContext();
     const notificationContext = useNotificationContext();
     const { signOut, data: session } = useAuth();
-
-    const modeOptions = [
-        {label: "Dunkel", value: "dark"},
-        {label: "Hell", value: "light"},
-    ];
 
     const timeUnitOptions: ("Minuten" | "Stunden")[] = ["Minuten", "Stunden"];
 
@@ -44,10 +44,12 @@ const SettingOptionsComponent: React.FC = () => {
     const languageOptions: string[] = ["Deutsch"];
 
     const handleChangeMode = (e: any) => {
+        if (!e || !e.target) return;
         setMode(e.target.innerText as Mode)
     };
 
     const handleChangeTimeUnit = (e: any) => {
+        if (!e || !e.target) return;
         appContext.setTimeUnit(e.target.innerText as TimeUnit)
     };
 
@@ -84,8 +86,26 @@ const SettingOptionsComponent: React.FC = () => {
             },
             {
                 icon: <AdminPanelSettingsOutlinedIcon fontSize="small" />,
-                label: "Role",
-                value: "Admin",
+                label: "Rollen",
+                value: (
+                    <Stack
+                        direction={"row"}
+                        spacing={0.5}
+                        sx={{
+                            maxWidth: isSmall ? "200px" : "unset",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            overflowX: isSmall ? "auto" : "hidden",
+                        }}
+                    >
+                        {// @ts-ignore
+                            session?.roles?.map((role) =>
+                                <Chip size={"lg"} key={role} variant="outlined">{role}</Chip>
+                            )
+                        }
+                    </Stack>
+                ),
             },
             {
                 icon: <ManageAccountsOutlinedIcon fontSize="small" />,
@@ -93,7 +113,7 @@ const SettingOptionsComponent: React.FC = () => {
                 value: <Button size="sm" color="danger" onClick={signOut}>Abmelden</Button>,
             },
         ],
-        detail: "Nur Benutzer mit der Role Admin können schreiben(Daten anlegen). Es kann keine Spieler, Semester, usw... angelegt werden, wenn die Role Admin nicht besteht.",
+        detail: `Nur Benutzer mit der Rolle "admin" können schreiben(Daten anlegen). Es kann keine Spieler, Semester, usw... angelegt werden, wenn die Rolle "admin" nicht besteht.`,
     };
 
     const display: Group<GroupName> = {
