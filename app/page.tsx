@@ -10,7 +10,7 @@ const Home: React.FC = async () => {
     return (
         <PageWrapperComponent
             title={"Startseite"}
-            rightContent={<SemesterSelectionComponent />}
+            // rightContent={<SemesterSelectionComponent />}
             hideBackButton={true}
         >
             <Stack spacing={"var(--gap-3)"} sx={{ mt: "var(--gap-3)" }}>
