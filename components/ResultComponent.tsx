@@ -1,6 +1,6 @@
 "use client";
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Alert, Box, Menu, MenuItem, Stack} from "@mui/joy";
+import {Alert, Box, Button, Input, Menu, MenuItem, Stack, Typography} from "@mui/joy";
 import {SemesterSelectionComponent} from "@/components/shared/SemesterSelectionComponent";
 import useApplicationContext from "@/hooks/useApplicationContext";
 import useSWR from "swr";
@@ -27,15 +27,13 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import Dropdown from '@mui/joy/Dropdown';
 import MenuButton from '@mui/joy/MenuButton';
+import SearchInputComponent from "@/components/shared/SearchInputComponent";
 
 export const ResultComponent: React.FC = () => {
     const { semester } = useApplicationContext();
     const { isSmall } = useMediaQuery();
     const exportButtonPortalRef = useRef<HTMLDivElement>();
-
-    const handleExport = (results: CleanResult[], format: keyof typeof exportFromJSON.types) => {
-        exportResult(results, "ergebnisse", format);
-    }
+    const searchInputPortalRef = useRef<HTMLDivElement>();
 
     return (
         <Stack spacing={"var(--gap-4)"}>
@@ -50,44 +48,20 @@ export const ResultComponent: React.FC = () => {
                 }}
             >
                 <Box component="div" sx={{ justifySelf: "flex-start" }}>
-                    <SemesterSelectionComponent />
+                    {/*<SemesterSelectionComponent />*/}
+                    <Box id={"searchInputPortalRef"} ref={searchInputPortalRef} component="div" sx={{ display: "grid" }}></Box>
                 </Box>
                 <Box sx={{ justifySelf: "flex-end" }}>
-                    <Box ref={exportButtonPortalRef} component="div" sx={{ display: "grid" }}></Box>
+                    <Box id={"exportButtonPortalRef"} ref={exportButtonPortalRef} component="div" sx={{ display: "grid" }}></Box>
                 </Box>
             </Stack>
             {semester ?
                 <ResultWrapperComponent semesterId={semester.id}>
                     {(cleanResults, paginationConfig) =>
-                        <>
-                            {cleanResults.length === 0 ?
-                                <Alert>
-                                    Keine Ergebnisse für dieses Semester gefunden.
-                                    Es wurde in diesem Semester noch nicht gespielt.
-                                </Alert>
-                                :
-                                <>
-                                    <ResultsTableComponent
-                                        results={cleanResults}
-                                        paginationConfig={paginationConfig}
-                                    />
-                                    {createPortal(
-                                        <Dropdown>
-                                            <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
-                                            <Menu component="div">
-                                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.csv)}>
-                                                    Als .csv exportieren
-                                                </MenuItem>
-                                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.xls)}>
-                                                    Als .xls exportieren
-                                                </MenuItem>
-                                            </Menu>
-                                        </Dropdown>,
-                                        exportButtonPortalRef.current as Element
-                                    )}
-                                </>
-                            }
-                        </>
+                        <ResultWrapperContent
+                            cleanResults={cleanResults}
+                            paginationConfig={paginationConfig}
+                        />
                     }
                 </ResultWrapperComponent> :
                 <Alert color="warning">Wählen Sie erst ein Semester aus </Alert>
@@ -292,3 +266,85 @@ const ResultWrapperComponent: React.FC<PropsResultWrapper> = (props) => {
         </>
     );
 };
+
+type PropsResultWrapperContent = {
+    cleanResults: CleanResult[];
+    paginationConfig: PaginationConfig;
+}
+const ResultWrapperContent: React.FC<PropsResultWrapperContent> = (props) => {
+    const { cleanResults, paginationConfig, } = props;
+    const [searchInputValue, setSearchInputValue] = useState<string>("");
+    const [cleanResultsToShow, setCleanResultsToShow] = useState<CleanResult[]>([]);
+
+    useEffect(() => {
+        setCleanResultsToShow(cleanResults);
+    }, [cleanResults]);
+
+    const handleExport = (results: CleanResult[], format: keyof typeof exportFromJSON.types) => {
+        exportResult(results, "ergebnisse", format);
+    }
+
+    const handleSearchInputValueChange = (event: any) => {
+        event?.stopPropagation();
+        event?.preventDefault();
+        const value = event.target.value;
+
+        setSearchInputValue(value);
+        const filteredResults = cleanResults.filter((result) =>
+            result.spielerId.toLowerCase().includes(value.toLowerCase())
+        );
+        setCleanResultsToShow(filteredResults);
+    }
+
+    const resetSearch = () => {
+        setCleanResultsToShow(cleanResults);
+        setSearchInputValue("");
+    }
+
+    return (
+        <>
+            {cleanResultsToShow.length === 0 ?
+                <Alert color={"warning"} size="lg" sx={{ borderRadius: "md" }}>
+                    <div>
+                        <Typography level="title-lg" sx={{mb: 1 }}>Keine Ergebnisse gefunden</Typography>
+                        <Typography level="body-md">
+                            Der Spieler mit der eingegebenen Spieler-ID hat entweder noch nicht gespielt oder existiert
+                            nicht!.
+                        </Typography>
+                        <Button
+                            sx={{ mt: 2, borderRadius: "md" }}
+                            onClick={resetSearch}
+                        >
+                            Zurück zu den Datensätzen
+                        </Button>
+                    </div>
+                </Alert>
+                :
+                <>
+                    <ResultsTableComponent
+                        results={cleanResultsToShow}
+                        paginationConfig={paginationConfig}
+                    />
+                    {createPortal(
+                        <Dropdown>
+                            <MenuButton endDecorator={<ArrowDropDown />}>Exportieren</MenuButton>
+                            <Menu component="div">
+                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.csv)}>
+                                    Als .csv exportieren
+                                </MenuItem>
+                                <MenuItem onClick={() => handleExport(cleanResults, exportFromJSON.types.xls)}>
+                                    Als .xls exportieren
+                                </MenuItem>
+                            </Menu>
+                        </Dropdown>,
+                        document.getElementById("exportButtonPortalRef") as Element
+                    )}
+                    {createPortal(
+                        <SearchInputComponent value={searchInputValue} onChange={handleSearchInputValueChange} />,
+                        document.getElementById("searchInputPortalRef") as Element
+                    )}
+                </>
+            }
+        </>
+    )
+}
