@@ -92,7 +92,7 @@ const MainBoxContainer = styled(Box)`
     max-width: var(--page-main-content-max-width);
 
     @media screen and (max-width: 900px) {
-        padding: 0 var(--gap-2) var(--gap-8) var(--gap-2);
+        padding: 0 calc(var(--gap-1) + 7px) var(--gap-8) calc(var(--gap-1) + 7px);
     }
 `;
 

@@ -70,6 +70,10 @@ const NavigationBarContainer = styled(Sheet)`
     align-items: center;
     padding: var(--gap-1) var(--gap-2);
     height: 100%;
+    
+    @media screen and (max-width: 900px) {
+        padding: calc(var(--gap-1) + 5px);
+    }
 `;
 
 const NavigationBarOptionsContainer = styled(Box)`
