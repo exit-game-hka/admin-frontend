@@ -19,6 +19,10 @@ import WifiTetheringErrorRoundedOutlinedIcon from "@mui/icons-material/WifiTethe
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import {ADMIN_ROLE, useAuth} from "@/hooks/useAuth";
+import NumbersOutlinedIcon from '@mui/icons-material/NumbersOutlined';
+import HubOutlinedIcon from '@mui/icons-material/HubOutlined';
+import PlayCircleFilledWhiteOutlinedIcon from '@mui/icons-material/PlayCircleFilledWhiteOutlined';
+import ChromeReaderModeOutlinedIcon from '@mui/icons-material/ChromeReaderModeOutlined';
 
 type AufgabeInfoGroupName = "Rätsel" | "Lösung" | "Beschreibung";
 
@@ -41,12 +45,12 @@ const RoomDetailedInfoComponent: React.FC = () => {
         setShowEditForm(false);
     };
 
-    const roomPreviewInfoList: { lable: string, value?: string }[] = [
-        { lable: "Bezeichnung", value: room?.name },
-        { lable: "Anzahl Rätsel", value: String(room?.aufgaben.length) },
-        { lable: "Verwendet das Physik-Engine", value: "Ja" },
-        { lable: "Status", value: "Aktiv" },
-        { lable: "Beschreibung", value: room?.beschreibung },
+    const roomPreviewInfoList: { icon?: any, lable: string, value?: string }[] = [
+        { icon: <DescriptionOutlinedIcon />, lable: "Bezeichnung", value: room?.name },
+        { icon: <NumbersOutlinedIcon />, lable: "Anzahl Rätsel", value: String(room?.aufgaben.length) },
+        { icon: <HubOutlinedIcon />,lable: "Verwendet das Physik-Engine", value: "Ja" },
+        { icon: <PlayCircleFilledWhiteOutlinedIcon />, lable: "Status", value: "Aktiv" },
+        { icon: <ChromeReaderModeOutlinedIcon />, lable: "Beschreibung", value: room?.beschreibung },
     ];
 
     if (isLoading || !room) return <div>Raum wird geladen...</div>
@@ -79,7 +83,10 @@ const RoomDetailedInfoComponent: React.FC = () => {
                         {roomPreviewInfoList.map((info, index, arr) =>
                             <React.Fragment key={info.lable}>
                                 <Stack direction="row" spacing={2} sx={{ px: 1.5 }}>
-                                    <Typography level={"body-sm"} sx={{ flexGrow: 1 }}>{info.lable}</Typography>
+                                    <Stack direction={"row"} spacing={"var(--gap-2)"} sx={{ flexGrow: 1 }}>
+                                        {info.icon}
+                                        <Typography level={"body-sm"}>{info.lable}</Typography>
+                                    </Stack>
                                     <Typography level={"body-sm"}>{info.value}</Typography>
                                 </Stack>
                                 {index !== arr.length - 1 ? <Divider /> : null}
