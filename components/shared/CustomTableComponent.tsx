@@ -17,6 +17,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import {PaginationConfig} from "@/contexts/ApplicationContext";
+import useApplicationContext from "@/hooks/useApplicationContext";
 
 type TableBodyRow = {
     content: ReactNode;
@@ -33,15 +34,25 @@ type Props = TableProps & {
 export const CustomTableComponent: React.FC<Props> = (props) => {
     const { headerCells, bodyRows, footer, paginationConfig, ...tableProps } = props;
     const { isSmall } = useMediaQuery();
+    const appContext = useApplicationContext();
 
     return (
-        <Stack component="div" spacing="var(--gap-3)">
+        <Stack
+            component="div"
+            spacing="var(--gap-3)"
+            sx={{
+                borderRadius: "lg",
+            }}
+        >
             <Table
                 size="lg"
                 //variant="soft"
-                sx={{ borderRadius: "lg" }}
+                sx={{
+                    borderRadius: "lg",
+                }}
                 borderAxis="both"
-                //stripe="odd"
+                stripe={appContext.tableStripe}
+                //stickyHeader
                 {...tableProps}
             >
                 <Box
@@ -60,6 +71,8 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
                         "& tr:first-child th:last-child": {
                             borderTopRightRadius: "12px !important",
                         },
+                        position: "sticky",
+                        top: 128.5,
                     }}
                 >
                     {headerCells}
@@ -81,13 +94,16 @@ export const CustomTableComponent: React.FC<Props> = (props) => {
                             key={index}
                             onClick={row.onClick}
                             sx={{
-                                "&:hover": {
+                                "&:hover": row.onClick ? {
                                     "& *": {
                                         backgroundColor: theme => theme.vars.palette.primary[500],
                                         borderColor: theme => theme.vars.palette.primary[500],
                                         color: "white",
                                         cursor: "pointer",
                                     },
+                                } : null,
+                                "& *": {
+                                    minHeight: "35px",
                                 },
                             }}
                         >
@@ -128,7 +144,11 @@ const PaginationComponent: React.FC<PaginationConfig> = (props) => {
             component="div"
             size="sm"
             variant="outlined"
-            sx={{ borderRadius: "lg" }}
+            sx={{
+                borderRadius: "lg",
+                position: "sticky",
+                bottom: 0,
+            }}
         >
             <Box
                 sx={{
