@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Badge, Box, Typography} from "@mui/joy";
+import {Box} from "@mui/joy";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import {CustomTableComponent} from "@/components/shared/CustomTableComponent";
 import {CleanResult, PaginationConfig} from "@/contexts/ApplicationContext";
@@ -24,11 +24,10 @@ export const ResultsTableComponent: React.FC<Props> = (props) => {
     return (
         <CustomTableComponent
             size="md"
-            borderAxis="both"
             paginationConfig={paginationConfig}
             headerCells={
                 <>
-                    <Box component="tr">
+                    <Box component="tr" sx={{ minHeight: "100px" }}>
                         <Box component="th" rowSpan={2} sx={{ width: "50px" }}></Box>
                         <Box component="th" rowSpan={2} sx={{ width: "145px" }}>Spieler-ID</Box>
                         {isSmall ? null :
@@ -37,16 +36,28 @@ export const ResultsTableComponent: React.FC<Props> = (props) => {
                                     Anzahl Interaktionen pro Raum
                                 </Box>
                                 <Box component="th" colSpan={6} sx={{ textAlign: "center !important" }}>Dauer pro Raum</Box>
-                                <Box component="th" rowSpan={2} sx={{ width: "130px" }}>Dauer insgesamt</Box>
+                                <Box
+                                    component="th"
+                                    rowSpan={2}
+                                    sx={{
+                                        width: "90px",
+                                        "& *": {
+                                            textAlign: "center",
+                                        },
+                                    }}
+                                >
+                                    <div>Dauer</div>
+                                    <div>insgesamt</div>
+                                </Box>
                                 <Box component="th" colSpan={6} sx={{ textAlign: "center !important" }}>
                                     Anzahl Versuche pro Rätsel (Raum)
                                 </Box>
                             </>
                         }
                         <Box component="th" rowSpan={2} sx={{ width: "135px" }}>Spiel beendet</Box>
-                        {isSmall ? null :
-                            <Box component="th" rowSpan={2} sx={{ width: "18%" }}>Kommentare</Box>
-                        }
+                        {/*{isSmall ? null :*/}
+                        {/*    <Box component="th" rowSpan={2} sx={{ width: "18%" }}>Kommentare</Box>*/}
+                        {/*}*/}
                     </Box>
                     {isSmall ? null :
                         <Box
@@ -103,26 +114,26 @@ export const ResultsTableComponent: React.FC<Props> = (props) => {
                                 {row.hasFinishedGame}
                             </Box>
 
-                            {isSmall ? null :
-                                <Box component="td">
-                                    {row.comments.length > 0 ?
-                                        <Alert sx={{ pr: row.comments.length > 1 ? 2 : 0 }}>
-                                            <Typography noWrap sx={{ mr: row.comments.length > 1 ? 2 : 0 }}>{row.comments[0]}</Typography>
-                                            {row.comments.length > 1 ?
-                                                <Badge
-                                                    badgeContent={`+${row.comments.length - 1}`}
-                                                    size={"md"}
-                                                    badgeInset={"0 5px"}
-                                                >
-                                                    <div></div>
-                                                </Badge>
-                                                : null
-                                            }
-                                        </Alert>
-                                        : null
-                                    }
-                                </Box>
-                            }
+                            {/*{isSmall ? null :*/}
+                            {/*    <Box component="td">*/}
+                            {/*        {row.comments.length > 0 ?*/}
+                            {/*            <Alert sx={{ pr: row.comments.length > 1 ? 2 : 0 }}>*/}
+                            {/*                <Typography noWrap sx={{ mr: row.comments.length > 1 ? 2 : 0 }}>{row.comments[0]}</Typography>*/}
+                            {/*                {row.comments.length > 1 ?*/}
+                            {/*                    <Badge*/}
+                            {/*                        badgeContent={`+${row.comments.length - 1}`}*/}
+                            {/*                        size={"md"}*/}
+                            {/*                        badgeInset={"0 5px"}*/}
+                            {/*                    >*/}
+                            {/*                        <div></div>*/}
+                            {/*                    </Badge>*/}
+                            {/*                    : null*/}
+                            {/*                }*/}
+                            {/*            </Alert>*/}
+                            {/*            : null*/}
+                            {/*        }*/}
+                            {/*    </Box>*/}
+                            {/*}*/}
                         </React.Fragment>
                     )
                 })
