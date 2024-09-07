@@ -101,6 +101,8 @@ type ContextOutput = {
     setTimeUnit: (timeUnit: TimeUnit) => void;
     numberDecimalPlace: NumberDecimalPlace;
     setNumberDecimalPlace: (numberDecimalPlace: NumberDecimalPlace) => void;
+    tableStripe?: TableStripe | undefined;
+    setTableStripe: (tableStripe: TableStripe) => void;
     // Notifications
     newNotification: Notification | undefined;
     setNewNotification: (notification: Notification | undefined) => void;
@@ -122,14 +124,24 @@ type ContextOutput = {
 // @ts-ignore
 export const ApplicationContext = createContext<ContextOutput>({});
 
+const DEFAULT_SEMESTER: Semester = {
+    id: "00000000-0000-0000-0000-000000000001",
+    start: new Date("2024-03-18T18:22:01.459Z"),
+    ende: new Date("2024-08-31T18:22:01.459Z"),
+    bezeichnung: "SS24"
+};
+
+export type TableStripe = "odd" | "even";
+
 type Props = Readonly<PropsWithChildren>;
 
 export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
     const { children } = props;
 
-    const [semester, setSemester] = useState<Semester | undefined>(undefined);
+    const [semester, setSemester] = useState<Semester>(DEFAULT_SEMESTER);
     const [timeUnit, setTimeUnit] = useState<TimeUnit>("Minuten");
     const [numberDecimalPlace, setNumberDecimalPlace] = useState<NumberDecimalPlace>(0);
+    const [tableStripe, setTableStripe] = useState<TableStripe | undefined>(undefined);
     const [newNotification, setNewNotification] = useState<Notification | undefined>(undefined);
 
     useEffect(() => {
@@ -141,17 +153,29 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
 
         const getNumberDecimalPlaceFromLocalStorage = () => {
             const numberDecimalPlaceFromLocalStorage = localStorage.getItem("number-decimal-place");
-            if (!numberDecimalPlaceFromLocalStorage || numberDecimalPlaceFromLocalStorage!== "0" && numberDecimalPlaceFromLocalStorage!== "1" && numberDecimalPlaceFromLocalStorage!== "2") return;
+            if (!numberDecimalPlaceFromLocalStorage || numberDecimalPlaceFromLocalStorage !== "0" && numberDecimalPlaceFromLocalStorage !== "1" && numberDecimalPlaceFromLocalStorage!== "2") return;
             setNumberDecimalPlace(parseInt(numberDecimalPlaceFromLocalStorage) as NumberDecimalPlace);
+        }
+
+        const getTableStripeFromLocalStorage = () => {
+            const tableStripeFromLocalStorage = localStorage.getItem("table-stripe");
+            if (!tableStripeFromLocalStorage || tableStripeFromLocalStorage !== "even" && tableStripeFromLocalStorage !== "odd") return;
+            setTableStripe(tableStripeFromLocalStorage as TableStripe);
         }
 
         getTimeUnitFromLocalStorage();
         getNumberDecimalPlaceFromLocalStorage();
+        getTableStripeFromLocalStorage();
     }, []);
 
     const setTimeUnitHandler = (timeUnit: TimeUnit) => {
         localStorage.setItem("time-unit", timeUnit);
         setTimeUnit(timeUnit);
+    }
+
+    const setTableStripeHandler = (tableStripe: TableStripe) => {
+        localStorage.setItem("table-stripe", tableStripe);
+        setTableStripe(tableStripe);
     }
 
     const setNumberDecimalPlaceHandler = (numberDecimalPlace: NumberDecimalPlace) => {
@@ -361,6 +385,8 @@ export const ApplicationContextProvider: React.FC<Props> = (props: Props) => {
             setTimeUnit: setTimeUnitHandler,
             numberDecimalPlace,
             setNumberDecimalPlace: setNumberDecimalPlaceHandler,
+            tableStripe,
+            setTableStripe: setTableStripeHandler,
             newNotification,
             setNewNotification,
             getAllNotifications,
