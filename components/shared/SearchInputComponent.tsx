@@ -1,6 +1,7 @@
 import React from "react";
 import {Input} from "@mui/joy";
 import {SxProps} from "@mui/system";
+import {useMediaQuery} from "@/hooks/useMediaQuery";
 
 type Props = {
     value: string;
@@ -9,6 +10,7 @@ type Props = {
 }
 const SearchInputComponent: React.FC<Props> = (props) => {
     const { value, onChange, customStyles } = props;
+    const { isSmall } = useMediaQuery();
 
     return (
         <Input
@@ -17,7 +19,7 @@ const SearchInputComponent: React.FC<Props> = (props) => {
                 paddingLeft: "10px",
                 paddingRight: "10px",
                 borderRadius: "md",
-                minWidth: "400px",
+                minWidth: isSmall ? "unset" : "400px",
                 ...customStyles,
             }}
             value={value}
