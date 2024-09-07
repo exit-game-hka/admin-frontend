@@ -84,13 +84,13 @@ const StatusListRendererComponent: React.FC<PropsStatusListRenderer> = (props) =
             />
         </StatusListContainer>
     );
-}
+};
 
 const StatusListContainer = styled(Box)`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-gap: var(--gap-3);
-    
+
     @media screen and (max-width: 900px) {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
