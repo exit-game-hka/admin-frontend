@@ -70,6 +70,8 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
         );
     }, [ergebnisList]);
 
+    const unixDateFromSpielerId: string = spieler?.spielerId.slice(1) ?? "";
+
     if (isLoading || !spieler || !semester || !veranstaltung || !interactionList || !ergebnisList || !kommentarList) return <div>Wird geladen...</div>;
 
     if (error) return <Alert color={"danger"}>{(error as Error).toString()}</Alert>
@@ -85,15 +87,31 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                             <Typography>{spieler.spielerId}</Typography>
                         </Stack>
                         <Stack>
-                            <Typography level={"title-md"}>Semester</Typography>
-                            <Typography>{semester.bezeichnung}</Typography>
+                            <Typography level={"title-md"}>Registriert am</Typography>
+                            <Typography>{
+                                new Intl.DateTimeFormat(
+                                    "de-DE",
+                                    {
+                                        day: "2-digit",
+                                        month: "long",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                    }
+                                ).format(new Date(parseInt(unixDateFromSpielerId)))
+                            }</Typography>
                         </Stack>
-                        <Stack>
-                            <Typography level={"title-md"}>Veranstaltung</Typography>
-                            <Typography>
-                                {`${veranstaltung.bezeichnung} - ${veranstaltung.name}`}
-                            </Typography>
-                        </Stack>
+                        {/*<Stack>*/}
+                        {/*    <Typography level={"title-md"}>Semester</Typography>*/}
+                        {/*    <Typography>{semester.bezeichnung}</Typography>*/}
+                        {/*</Stack>*/}
+                        {/*<Stack>*/}
+                        {/*    <Typography level={"title-md"}>Veranstaltung</Typography>*/}
+                        {/*    <Typography>*/}
+                        {/*        {`${veranstaltung.bezeichnung} - ${veranstaltung.name}`}*/}
+                        {/*    </Typography>*/}
+                        {/*</Stack>*/}
                     </Stack>
                 </OverviewItem>
                 <OverviewItem>
@@ -217,26 +235,26 @@ export const ResultDetailComponent: React.FC<Props> = (props) => {
                         </>
                     }
                 </Stack>
-                <Stack spacing={"var(--gap-2)"}>
-                    <Typography level="title-lg">Kommentare</Typography>
-                    <Stack spacing={"var(--gap-1)"}>
-                        {kommentarList.length === 0 ? <Alert>Keine Daten gefunden</Alert> : kommentarList.map((k, index) =>
-                            <Sheet
-                                key={`${k.inhalt}${index}`}
-                                variant={"outlined"}
-                                sx={{
-                                    p: "var(--gap-2)",
-                                    borderRadius: "var(--gap-1)"
-                                }}
-                            >
-                                <Typography level={"body-sm"} sx={{ alignSelf: "flex-end", textAlign: "right", mb: 1 }}>
-                                    {k.creationTimestamp.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute:"2-digit"})}
-                                </Typography>
-                                <Typography>{k.inhalt}</Typography>
-                            </Sheet>
-                        )}
-                    </Stack>
-                </Stack>
+                {/*<Stack spacing={"var(--gap-2)"}>*/}
+                {/*    <Typography level="title-lg">Kommentare</Typography>*/}
+                {/*    <Stack spacing={"var(--gap-1)"}>*/}
+                {/*        {kommentarList.length === 0 ? <Alert>Keine Daten gefunden</Alert> : kommentarList.map((k, index) =>*/}
+                {/*            <Sheet*/}
+                {/*                key={`${k.inhalt}${index}`}*/}
+                {/*                variant={"outlined"}*/}
+                {/*                sx={{*/}
+                {/*                    p: "var(--gap-2)",*/}
+                {/*                    borderRadius: "var(--gap-1)"*/}
+                {/*                }}*/}
+                {/*            >*/}
+                {/*                <Typography level={"body-sm"} sx={{ alignSelf: "flex-end", textAlign: "right", mb: 1 }}>*/}
+                {/*                    {k.creationTimestamp.toLocaleDateString([], {day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute:"2-digit"})}*/}
+                {/*                </Typography>*/}
+                {/*                <Typography>{k.inhalt}</Typography>*/}
+                {/*            </Sheet>*/}
+                {/*        )}*/}
+                {/*    </Stack>*/}
+                {/*</Stack>*/}
             </Stack>
         </MainContainer>
     );
