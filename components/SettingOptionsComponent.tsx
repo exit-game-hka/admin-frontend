@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect} from "react";
+import React from "react";
 import {DetailsListComponent, Group} from "@/components/shared/DetailListComponent";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
@@ -20,8 +20,9 @@ import {useMediaQuery} from "@/hooks/useMediaQuery";
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 import {useAuth} from "@/hooks/useAuth";
 import useApplicationContext from "@/hooks/useApplicationContext";
-import {NumberDecimalPlace, TimeUnit} from "@/contexts/ApplicationContext";
+import {NumberDecimalPlace, TableStripe, TimeUnit} from "@/contexts/ApplicationContext";
 import {useNotificationContext} from "@/contexts/NotificationContext";
+import TextureOutlinedIcon from '@mui/icons-material/TextureOutlined';
 
 type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung";
 
@@ -41,11 +42,18 @@ const SettingOptionsComponent: React.FC = () => {
 
     const decimalPlaceOptions: NumberDecimalPlace[] = [0, 1, 2];
 
+    const tableStripeOptions = [
+        { label: "Gerade Streifen", value: "even" },
+        { label: "Ungerade Streifen", value: "odd" },
+        { label: "Keine Streifen", value: undefined },
+    ];
+
     const languageOptions: string[] = ["Deutsch"];
 
     const handleChangeMode = (e: any) => {
         if (!e || !e.target) return;
-        setMode(e.target.innerText as Mode)
+        const newMode = modeOptions.find((m) => m.label === e.target.innerText) ?? null;
+        setMode(newMode?.value as Mode)
     };
 
     const handleChangeTimeUnit = (e: any) => {
@@ -55,6 +63,11 @@ const SettingOptionsComponent: React.FC = () => {
 
     const handleChangeDecimalPlace = (e: any) => {
         appContext.setNumberDecimalPlace(parseInt(e.target.innerText) as NumberDecimalPlace);
+    };
+
+    const handleChangeTableStripe = (e: any) => {
+        const newTableSTripe = tableStripeOptions.find((ts) => ts.label === e.target.innerText);
+        appContext.setTableStripe(newTableSTripe?.value as TableStripe);
     };
 
     const userInfo: Group<GroupName> = {
@@ -124,12 +137,12 @@ const SettingOptionsComponent: React.FC = () => {
                 label: "Modus",
                 value: (
                     <Select
-                        defaultValue={mode}
+                        defaultValue={modeOptions.find(m => m.value === mode)?.label}
                         onChange={handleChangeMode}
                         sx={{ width: isSmall ? 100 : 200, mr: -1 }}
                     >
                         {modeOptions.map((mode) =>
-                            <Option key={mode.value} value={mode.value}>{mode.value}</Option>
+                            <Option key={mode.value} value={mode.label} label={mode.label}>{mode.label}</Option>
                         )}
                     </Select>
                 ),
@@ -160,6 +173,21 @@ const SettingOptionsComponent: React.FC = () => {
                     >
                         {decimalPlaceOptions.map((dp) =>
                             <Option key={dp} value={dp}>{dp}</Option>
+                        )}
+                    </Select>
+                ),
+            },
+            {
+                icon: <TextureOutlinedIcon fontSize="small" />,
+                label: "Tabellenstreifen",
+                value: (
+                    <Select
+                        defaultValue={tableStripeOptions.find(ts => ts.value === appContext.tableStripe)?.label}
+                        onChange={handleChangeTableStripe}
+                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                    >
+                        {tableStripeOptions.map((ts) =>
+                            <Option key={ts.value} value={ts.label} label={ts.label}>{ts.label}</Option>
                         )}
                     </Select>
                 ),
