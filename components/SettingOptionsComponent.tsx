@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {DetailsListComponent, Group} from "@/components/shared/DetailListComponent";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
@@ -15,7 +15,26 @@ import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlin
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import VolumeUpOutlinedIcon from '@mui/icons-material/VolumeUpOutlined';
-import {Button, Chip, Option, Select, Stack, Switch, Typography, useColorScheme} from "@mui/joy";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import {
+    Button,
+    Chip,
+    DialogContent,
+    IconButton,
+    Input,
+    Modal,
+    ModalClose,
+    ModalDialog,
+    Option,
+    Select,
+    Stack,
+    Switch,
+    Typography,
+    useColorScheme
+} from "@mui/joy";
 import {useMediaQuery} from "@/hooks/useMediaQuery";
 import {Mode} from "@mui/system/cssVars/useCurrentColorScheme";
 import {useAuth} from "@/hooks/useAuth";
@@ -23,8 +42,9 @@ import useApplicationContext from "@/hooks/useApplicationContext";
 import {NumberDecimalPlace, TableStripe, TimeUnit} from "@/contexts/ApplicationContext";
 import {useNotificationContext} from "@/contexts/NotificationContext";
 import TextureOutlinedIcon from '@mui/icons-material/TextureOutlined';
+import {getPasswordHashApi, updatePasswordApi} from "@/api/frontendUser";
 
-type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung";
+type GroupName = "Benutzer-Infos" | "Darstellung" | "Mitteilungen" | "Anzeige" | "Über die Anwendung" | "Sicherheit";
 
 const modeOptions = [
     {label: "Dunkel", value: "dark"},
@@ -105,7 +125,7 @@ const SettingOptionsComponent: React.FC = () => {
                         direction={"row"}
                         spacing={0.5}
                         sx={{
-                            maxWidth: isSmall ? "200px" : "unset",
+                            maxWidth: isSmall ? "300px" : "unset",
                             whiteSpace: "nowrap",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
@@ -139,7 +159,7 @@ const SettingOptionsComponent: React.FC = () => {
                     <Select
                         defaultValue={modeOptions.find(m => m.value === mode)?.label}
                         onChange={handleChangeMode}
-                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                        sx={{ width: isSmall ? 100 : 300, mr: -1 }}
                     >
                         {modeOptions.map((mode) =>
                             <Option key={mode.value} value={mode.label} label={mode.label}>{mode.label}</Option>
@@ -154,7 +174,7 @@ const SettingOptionsComponent: React.FC = () => {
                     <Select
                         defaultValue={appContext.timeUnit}
                         onChange={handleChangeTimeUnit}
-                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                        sx={{ width: isSmall ? 100 : 300, mr: -1 }}
                     >
                         {timeUnitOptions.map((t) =>
                             <Option key={t} value={t}>{t}</Option>
@@ -169,7 +189,7 @@ const SettingOptionsComponent: React.FC = () => {
                     <Select
                         defaultValue={appContext.numberDecimalPlace}
                         onChange={handleChangeDecimalPlace}
-                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                        sx={{ width: isSmall ? 100 : 300, mr: -1 }}
                     >
                         {decimalPlaceOptions.map((dp) =>
                             <Option key={dp} value={dp}>{dp}</Option>
@@ -184,7 +204,7 @@ const SettingOptionsComponent: React.FC = () => {
                     <Select
                         defaultValue={tableStripeOptions.find(ts => ts.value === appContext.tableStripe)?.label}
                         onChange={handleChangeTableStripe}
-                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                        sx={{ width: isSmall ? 100 : 300, mr: -1 }}
                     >
                         {tableStripeOptions.map((ts) =>
                             <Option key={ts.value} value={ts.label} label={ts.label}>{ts.label}</Option>
@@ -204,7 +224,7 @@ const SettingOptionsComponent: React.FC = () => {
                 value: (
                     <Select
                         defaultValue={"Deutsch"}
-                        sx={{ width: isSmall ? 100 : 200, mr: -1 }}
+                        sx={{ width: isSmall ? 150 : 300, mr: -1 }}
                     >
                         {languageOptions.map((l) =>
                             <Option key={l} value={l}>{l}</Option>
@@ -288,11 +308,101 @@ const SettingOptionsComponent: React.FC = () => {
         detail: "Wenn aktiviert, werden Push-Benachrichtigungen 20 Sekunden lang angezeigt. Es wird kein Benachrichtigungston automatisch abgespielt, wenn die Push-Benachrichtigungen ausgeschaltet sind.",
     }
 
-    const allGroups: Group<GroupName>[] = [userInfo, display, notifications, illustration, aboutTheApp];
+    const security: Group<GroupName> = {
+        name: "Sicherheit",
+        items: [
+            {
+                icon: <LockOutlinedIcon fontSize="small" />,
+                label: "Spielpasswort",
+                value: <PasswordInputComponent />,
+            },
+        ],
+    }
+
+    const allGroups: Group<GroupName>[] = [userInfo, display, notifications, illustration, security, aboutTheApp];
 
     return (
         <DetailsListComponent groups={allGroups} />
     );
 };
+
+const PasswordInputComponent: React.FC = () => {
+    const { isSmall } = useMediaQuery();
+    const [value, setValue] = useState<string>("");
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
+    const [type, setType] = useState<"text" | "password">("password");
+
+    useEffect(() => {
+        getPasswordHashApi("frontend_user").then((pwd) => setValue(pwd.data));
+    }, []);
+
+    const handleInputChange = (event: any) => {
+        setValue(event.target.value);
+    }
+
+    const handleSave = async () => {
+        if (!value) return;
+        // const hash = await hashPassword(password);
+        await updatePasswordApi({ username: "frontend_user", password: value });
+        setShowSuccessMessage(true);
+    }
+
+    // const hashPassword = async (password: string): Promise<string> => {
+    //     const round = 10;
+    //     //return await bcrypt.hash(password, round);
+    // }
+
+    return (
+        <>
+            <Input
+                slotProps={{
+                    input: {
+                        type,
+                        value,
+                        required: true,
+                        placeholder: "**********",
+                        onChange: handleInputChange,
+                        autoComplete: "off",
+                    }
+                }}
+                endDecorator={
+                    <Stack
+                        component={"div"}
+                        direction={"row"}
+                    >
+                        <IconButton onClick={() => setType(type === "password" ? "text" : "password")} sx={{ mr: 0.5 }}>
+                            {type === "password" ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}
+                        </IconButton>
+                        {isSmall ?
+                            <IconButton variant={"solid"} color={"primary"} onClick={handleSave}>
+                                <DoneOutlinedIcon />
+                            </IconButton> :
+                            <Button onClick={handleSave}>Speichern</Button>
+                        }
+                    </Stack>
+                }
+                sx={{ width: isSmall ? 150 : 300, mr: -1 }}
+            />
+            {showSuccessMessage ? <PasswordSuccessModal onClose={() => setShowSuccessMessage(false)} /> : null}
+        </>
+    );
+}
+
+type PasswordSuccessProps = {
+    onClose: () => void
+}
+const PasswordSuccessModal: React.FC<PasswordSuccessProps> = (props: PasswordSuccessProps) => {
+    const { onClose } = props;
+    return (
+        <>
+            <Modal open={true} onClose={onClose}>
+                <ModalDialog size={"lg"}>
+                    <ModalClose />
+                    <DialogContent>Passwort erfolgreich aktualisiert!</DialogContent>
+                </ModalDialog>
+            </Modal>
+        </>
+    );
+}
 
 export default SettingOptionsComponent;
